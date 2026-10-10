@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============ BASE ============ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans antialiased text-slate-800 bg-white dark:bg-[#070b18] dark:text-slate-100 transition-colors duration-300;
+  }
+  ::selection {
+    @apply bg-brand-500/30;
+  }
+}
+
+/* ============ CUSTOM SCROLLBAR ============ */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-500/40 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-500/60;
+}
+
+/* ============ UTILITIES ============ */
+@layer components {
+  .glass {
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-slate-200/70 dark:border-white/10;
+  }
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-accent-400 to-sky-400;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold text-white
+      bg-gradient-to-r from-brand-600 to-accent-600 shadow-glow
+      hover:from-brand-500 hover:to-accent-500 active:scale-[0.98] transition-all duration-200;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold
+      text-brand-700 dark:text-brand-100 border border-brand-600/30 dark:border-white/15
+      hover:bg-brand-500/10 transition-all duration-200 active:scale-[0.98];
+  }
+  .section {
+    @apply max-w-7xl mx-auto px-5 sm:px-8 py-20 sm:py-28;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider
+      text-brand-700 dark:text-brand-200 bg-brand-500/10 border border-brand-500/20;
+  }
+}

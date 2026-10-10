@@ -1,0 +1,225 @@
+import { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { CloseIcon } from './Icons';
+
+type Mode = 'signin' | 'signup';
+
+export function AuthModal({
+  open,
+  onClose,
+  initialMode = 'signin',
+}: {
+  open: boolean;
+  onClose: () => void;
+  initialMode?: Mode;
+}) {
+  const { signIn, signUp, signInWithGoogle, isSupabaseConfigured } = useAuth();
+  const [mode, setMode] = useState<Mode>(initialMode);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setMode(initialMode);
+      setError(null);
+      setNotice(null);
+    }
+  }, [open, initialMode]);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    if (open) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setNotice(null);
+    setBusy(true);
+    try {
+      if (mode === 'signup') {
+        await signUp(email.trim(), password, fullName.trim());
+        setNotice(
+          'Akaun dicipta! Sila semak email anda untuk pengesahan (jika diaktifkan), kemudian log masuk.',
+        );
+      } else {
+        await signIn(email.trim(), password);
+        onClose();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ralat tidak dijangka.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={mode === 'signin' ? 'Log masuk' : 'Daftar akaun'}
+    >
+      <div
+        className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative max-h-[92vh] w-full max-w-md overflow-y-auto rounded-3xl border border-slate-200 bg-white p-7 shadow-2xl dark:border-white/10 dark:bg-[#0d1226]">
+        <button
+          onClick={onClose}
+          aria-label="Tutup"
+          className="absolute right-4 top-4 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-white/10 dark:hover:text-white"
+        >
+          <CloseIcon size={18} />
+        </button>
+
+        <div className="mb-6">
+          <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">
+            {mode === 'signin' ? 'Selamat kembali 👋' : 'Mula berlatih percuma'}
+          </h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {mode === 'signin'
+              ? 'Log masuk untuk teruskan latihan lisan anda.'
+              : 'Cipta akaun dan kuasai Ujian Lisan SPM dengan AI.'}
+          </p>
+        </div>
+
+        <div className="mb-5 grid grid-cols-2 gap-1 rounded-full bg-slate-100 p-1 text-sm font-semibold dark:bg-white/5">
+          {(['signin', 'signup'] as Mode[]).map((m) => (
+            <button
+              key={m}
+              onClick={() => {
+                setMode(m);
+                setError(null);
+                setNotice(null);
+              }}
+              className={`rounded-full py-2 transition ${
+                mode === m
+                  ? 'bg-white text-brand-700 shadow dark:bg-brand-600 dark:text-white'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              {m === 'signin' ? 'Log Masuk' : 'Daftar'}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {mode === 'signup' && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Nama penuh
+              </label>
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Aisyah Rahman"
+                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 dark:border-white/10 dark:bg-white/5 dark:text-white"
+              />
+            </div>
+          )}
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="anda@sekolah.edu.my"
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 dark:border-white/10 dark:bg-white/5 dark:text-white"
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Kata laluan
+            </label>
+            <input
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 dark:border-white/10 dark:bg-white/5 dark:text-white"
+            />
+          </div>
+
+          {error && (
+            <p className="rounded-xl bg-red-50 px-4 py-2.5 text-sm text-red-600 dark:bg-red-500/10 dark:text-red-400">
+              {error}
+            </p>
+          )}
+          {notice && (
+            <p className="rounded-xl bg-emerald-50 px-4 py-2.5 text-sm text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
+              {notice}
+            </p>
+          )}
+          {!isSupabaseConfigured && (
+            <p className="rounded-xl bg-amber-50 px-4 py-2.5 text-xs text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">
+              Supabase belum dikonfigurasi. Tambah kunci dalam fail .env.
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-primary w-full disabled:opacity-60"
+          >
+            {busy
+              ? 'Sila tunggu…'
+              : mode === 'signin'
+                ? 'Log Masuk'
+                : 'Cipta Akaun'}
+          </button>
+        </form>
+
+        <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
+          <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+          ATAU
+          <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+        </div>
+
+        <button
+          onClick={() => {
+            void signInWithGoogle();
+          }}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path
+              fill="#4285F4"
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"
+            />
+            <path
+              fill="#34A853"
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"
+            />
+            <path
+              fill="#EA4335"
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"
+            />
+          </svg>
+          Teruskan dengan Google
+        </button>
+      </div>
+    </div>
+  );
+}
+
