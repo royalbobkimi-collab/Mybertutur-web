@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "f8d9991e-1d57-4edd-b88f-44495b303799"
+      }
+    },
+    "android": {
+      "package": "com.accmlmiloam.mybertuturweb"
+    }
+  }
+}
