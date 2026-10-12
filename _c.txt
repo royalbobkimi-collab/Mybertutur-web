@@ -1,0 +1,4 @@
+﻿[main f5d9f6f] fix: cleanup project root; standardize HTML lang/encoding; ensure public assets sync; update top-level index.html
+ 2 files changed, 33 insertions(+)
+ create mode 100644 app.json
+ create mode 100644 eas.json
