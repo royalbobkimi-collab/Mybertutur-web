@@ -1,0 +1,7 @@
+﻿[main 75966ac] fix: remove leftover temp files from git
+ 5 files changed, 8 insertions(+)
+ create mode 100644 _h.txt
+ create mode 100644 _i.txt
+ create mode 100644 _j.txt
+ create mode 100644 _k.txt
+ create mode 100644 _l.txt
