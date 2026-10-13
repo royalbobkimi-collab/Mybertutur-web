@@ -1,8 +1,0 @@
-﻿D  _c.txt
-D  _d.txt
-M  _g.txt
-?? _h.txt
-[main ec02576] fix: clean up leftover temp files from git
- 3 files changed, 11 insertions(+), 4 deletions(-)
- delete mode 100644 _c.txt
- delete mode 100644 _d.txt

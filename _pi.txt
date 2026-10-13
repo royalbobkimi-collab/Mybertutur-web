@@ -1,3 +1,0 @@
-﻿f5d9f6f fix: cleanup project root; standardize HTML lang/encoding; ensure public assets sync; update top-level index.html
-d52e65c fix vercel.json: remove unsupported properties (framework, buildCommand, outputDirectory)
-a68ed66 add vercel config: SPA rewrites, explicit vite build settings, asset cache headers
