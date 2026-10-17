@@ -1,10 +1,9 @@
 {
-  "cleanUrls": true,
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/favicon.png", "destination": "/favicon.png" },
+    { "source": "/logo.png", "destination": "/logo.png" },
+    { "source": "/((?!assets|favicon|logo).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
