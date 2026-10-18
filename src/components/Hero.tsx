@@ -2,9 +2,9 @@ import { ArrowRightIcon, CheckIcon, MicIcon, PlayIcon, SparkIcon } from './Icons
 import { Reveal } from './Reveal';
 
 const STATS = [
-  { value: '12,000+', label: 'Pelajar SPM' },
-  { value: '48,000+', label: 'Latihan Lisan' },
-  { value: '4.8★', label: 'Penilaian Pengguna' },
+  { value: 'RM0', label: 'Sepenuhnya Percuma' },
+  { value: 'BM & BI', label: 'Format SPM Sebenar' },
+  { value: 'AI', label: 'Penilaian Masa Nyata' },
 ];
 
 export function Hero({ onOpenAuth }: { onOpenAuth: (mode: 'signup') => void }) {

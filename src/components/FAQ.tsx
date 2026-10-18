@@ -9,15 +9,15 @@ const FAQS = [
   },
   {
     q: 'Adakah penilaian AI ini tepat?',
-    a: 'Ya. Penilaian menggunakan Gemini AI 3.8 Flash — model bahasa generasi terkini — dengan rubrik khusus yang dibina mengikut piawaian SPM sebenar. Setiap jawapan dinilai berdasarkan 4 kriteria utama (sebutan, kelancaran, tatabahasa & isi) dan dijajar dengan garis panduan pemarkahan rasmi. Ribu-uan pelajar telah menggunakannya untuk menilai dengan konsisten.',
+    a: 'Ya. Penilaian menggunakan Gemini AI dengan rubrik khusus yang dibina mengikut piawaian SPM sebenar. Setiap jawapan dinilai berdasarkan 4 kriteria utama (sebutan, kelancaran, tatabahasa & isi) dan dijajar dengan garis panduan pemarkahan rasmi supaya setiap penilaian konsisten.',
   },
   {
     q: 'Bolehkah saya gunakan di telefon?',
-    a: 'Boleh. MyBertutur berfungsi di mana-mana — telefon pintar, tablet dan komputer. Ia 100% berasaskan web, jadi tiada muat turun diperlukan. Cuma perlukan mikrofon dan sambungan internet.',
+    a: 'Boleh. MyBertutur berfungsi di telefon pintar, tablet dan komputer. Aplikasi mudah alih Android MyBertutur dan laman web ini menggunakan akaun yang sama. Cuma perlukan mikrofon dan sambungan internet.',
   },
   {
     q: 'Berapakah kosnya?',
-    a: 'MyBertutur boleh digunakan secara percuma dengan had latihan seminggu. Untuk latihan tanpa had, maklum balas penuh dan Mistake Bank, langganan Premium bermula dari RM9 sebulan. Pelajar sekolah kerajaan layari percuma melalui program digital KPM.',
+    a: 'MyBertutur adalah percuma sepenuhnya — tiada langganan, tiada bayaran dan tiada ciri dikunci di belakang plan berbayar. Untuk memastikan ciri AI kekal tersedia dan pantas untuk semua pelajar, penggunaan penilaian AI tertakluk pada had penggunaan harian yang munasabah.',
   },
   {
     q: 'Apakah "Mistake Bank" itu?',

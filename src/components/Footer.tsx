@@ -3,8 +3,8 @@ import { Logo } from './Icons';
 const PRODUCT_LINKS = [
   { label: 'Ciri-ciri', href: '#ciri' },
   { label: 'Cara Ia Berfungsi', href: '#cara' },
-  { label: 'Harga', href: '#harga' },
   { label: 'Soalan Lazim', href: '#faq' },
+  { label: 'Ulasan', href: '#ulasan' },
 ];
 
 // Exam-module links point at matching landing sections — the interactive app

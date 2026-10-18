@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { SVGProps } from 'react';
 
 /**
@@ -151,7 +152,8 @@ export const ChevronDownIcon = (p: IconProps) => (
   </Base>
 );
 
-export const Logo = ({ size = 32 }: { size?: number }) => (
+/** Existing inline mark — also the fallback if /logo.png is missing/broken. */
+const LogoMark = ({ size = 32 }: { size?: number }) => (
   <svg
     width={size}
     height={size}
@@ -167,12 +169,7 @@ export const Logo = ({ size = 32 }: { size?: number }) => (
       strokeWidth="3.2"
       strokeLinecap="round"
     />
-    <path
-      d="M30 16v12c0 2.2 1.8 4 4 4"
-      stroke="white"
-      strokeWidth="3.2"
-      strokeLinecap="round"
-    />
+    <path d="M30 16v12c0 2.2 1.8 4 4 4" stroke="white" strokeWidth="3.2" strokeLinecap="round" />
     <circle cx="34.5" cy="13" r="2.2" fill="white" />
     <defs>
       <linearGradient id="mbg" x1="0" y1="0" x2="48" y2="48">
@@ -182,3 +179,25 @@ export const Logo = ({ size = 32 }: { size?: number }) => (
     </defs>
   </svg>
 );
+
+/**
+ * Site logo. Renders the original MyBertutur artwork from `/logo.png`
+ * (public/logo.png) at its true aspect ratio inside a rounded frame that
+ * suits both light and dark backgrounds. If the file is absent or fails to
+ * load, it falls back to the inline mark so navigation never breaks.
+ */
+export const Logo = ({ size = 32 }: { size?: number }) => {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <LogoMark size={size} />;
+  return (
+    <img
+      src="/logo.png"
+      alt="MyBertutur"
+      width={size}
+      height={size}
+      onError={() => setFailed(true)}
+      className="rounded-[28%] object-cover shadow-sm ring-1 ring-slate-900/10 dark:ring-white/10"
+      style={{ width: size, height: size }}
+    />
+  );
+};

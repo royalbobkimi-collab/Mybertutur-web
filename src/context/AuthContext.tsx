@@ -16,11 +16,54 @@ type AuthContextValue = {
   loading: boolean;
   /** Whether Supabase env keys are present (used to gate auth UI). */
   isSupabaseConfigured: boolean;
+  /**
+   * One-shot human-readable notice from an OAuth redirect (e.g. the user
+   * cancelled the Google consent screen). Set once per redirect, cleared
+   * by the UI after it has been displayed.
+   */
+  authNotice: string | null;
+  clearAuthNotice: () => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 };
+
+/**
+ * Read an OAuth error left in the URL after a Supabase → Google redirect
+ * (implicit flow returns `#error=...`, PKCE-style returns `?error=...`).
+ * Returns a friendly Malay message, or null when no error is present.
+ * When an error IS found the error params are scrubbed from the URL so a
+ * refresh doesn't replay the message (the real auth code / tokens, if any,
+ * are untouched).
+ */
+function readOAuthErrorFromUrl(): string | null {
+  if (typeof window === 'undefined') return null;
+  const query = new URLSearchParams(window.location.search);
+  const hashStr = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '';
+  const hash = new URLSearchParams(hashStr);
+
+  const get = (key: string) => query.get(key) ?? hash.get(key);
+  const code = get('error_code') ?? get('error');
+  const description = get('error_description') ?? '';
+  if (!code) return null;
+
+  // Scrub only the error params; keep everything else intact.
+  const url = new URL(window.location.href);
+  ['error', 'error_code', 'error_description', 'error_description'].forEach((k) =>
+    url.searchParams.delete(k),
+  );
+  url.hash = '';
+  window.history.replaceState({}, '', url.toString());
+
+  if (/access_denied|cancelled|consent/i.test(`${code} ${description}`)) {
+    return 'Log masuk Google dibatalkan. Anda boleh cuba semula bila-bila masa.';
+  }
+  if (/redirect/i.test(description)) {
+    return 'Pengalihan log masuk tidak berjaya. Sila hubungi pentadbir untuk semak tetapan Redirect URL.';
+  }
+  return 'Log masuk Google tidak berjaya. Sila cuba semula.';
+}
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -47,9 +90,15 @@ function toFriendlyError(err: unknown): string {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authNotice, setAuthNotice] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
+
+    // Surface OAuth redirect errors (cancelled consent, bad redirect URL…)
+    // exactly once, then clean them from the URL.
+    const oauthError = readOAuthErrorFromUrl();
+    if (oauthError && mounted) setAuthNotice(oauthError);
 
     supabase.auth
       .getSession()
@@ -105,18 +154,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
   }, []);
 
+  const clearAuthNotice = useCallback(() => setAuthNotice(null), []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       session,
       user: session?.user ?? null,
       loading,
       isSupabaseConfigured,
+      authNotice,
+      clearAuthNotice,
       signIn,
       signUp,
       signInWithGoogle,
       signOut,
     }),
-    [session, loading, signIn, signUp, signInWithGoogle, signOut],
+    [session, loading, authNotice, clearAuthNotice, signIn, signUp, signInWithGoogle, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

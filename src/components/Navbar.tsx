@@ -6,8 +6,8 @@ import { ArrowRightIcon, Logo, MenuIcon, MoonIcon, SunIcon } from './Icons';
 const NAV_LINKS = [
   { label: 'Ciri-ciri', href: '#ciri' },
   { label: 'Cara Ia Berfungsi', href: '#cara' },
-  { label: 'Harga', href: '#harga' },
   { label: 'Soalan Lazim', href: '#faq' },
+  { label: 'Ulasan', href: '#ulasan' },
 ];
 
 export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup') => void }) {
@@ -62,6 +62,12 @@ export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup')
 
           {user ? (
             <div className="hidden items-center gap-3 sm:flex">
+              <span
+                title={user.email ?? undefined}
+                className="max-w-[180px] truncate text-sm font-medium text-slate-500 dark:text-slate-400"
+              >
+                {user.user_metadata?.full_name || user.email}
+              </span>
               <a
                 href="#ciri"
                 className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-500/10 dark:text-brand-200"

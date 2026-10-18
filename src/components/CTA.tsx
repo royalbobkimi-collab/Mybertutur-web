@@ -26,8 +26,8 @@ export function CTA({ onOpenAuth }: { onOpenAuth: (mode: 'signup') => void }) {
               Bersedia untuk cemerlang dalam Ujian Lisan SPM?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-white/80">
-              Sertai 12,000+ pelajar yang sudah berlatih dengan AI. Percuma untuk bermula — tiada
-              kad kredit diperlukan.
+              MyBertutur percuma sepenuhnya untuk semua pelajar — daftar dan mula berlatih dalam
+              beberapa saat. Tiada kad kredit diperlukan.
             </p>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
