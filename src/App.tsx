@@ -8,14 +8,16 @@ import { Testimonials } from './components/Testimonials';
 import { Pricing } from './components/Pricing';
 import { FAQ } from './components/FAQ';
 import { CTA } from './components/CTA';
-import { Footer } from './components/Footer';
+import { Footer, type LegalKind } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
+import { LegalDialog } from './components/LegalDialog';
 
 type AuthMode = 'signin' | 'signup';
 
 export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>('signin');
+  const [legalKind, setLegalKind] = useState<LegalKind | null>(null);
 
   const openAuth = useCallback((mode: AuthMode) => {
     setAuthMode(mode);
@@ -23,6 +25,7 @@ export default function App() {
   }, []);
 
   const closeAuth = useCallback(() => setAuthOpen(false), []);
+  const closeLegal = useCallback(() => setLegalKind(null), []);
 
   return (
     <AuthProvider>
@@ -39,9 +42,10 @@ export default function App() {
           <CTA onOpenAuth={openAuth} />
         </main>
 
-        <Footer />
+        <Footer onOpenLegal={setLegalKind} />
 
         <AuthModal open={authOpen} onClose={closeAuth} initialMode={authMode} />
+        <LegalDialog kind={legalKind} onClose={closeLegal} />
       </div>
     </AuthProvider>
   );

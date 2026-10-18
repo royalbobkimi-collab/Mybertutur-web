@@ -7,20 +7,26 @@ const PRODUCT_LINKS = [
   { label: 'Soalan Lazim', href: '#faq' },
 ];
 
+// Exam-module links point at matching landing sections — the interactive app
+// lives in the MyBertutur mobile app, so there is deliberately no `/app`
+// route on this marketing site (a dead `/app` href only served the SPA
+// fallback / a confusing reload).
 const EXAM_LINKS = [
-  { label: 'Ujian Lisan BM (Bahagian A & B)', href: '/app' },
-  { label: 'Ujian Lisan BI (Part 2 / 3 / KBAT)', href: '/app' },
-  { label: 'Mistake Bank', href: '/app' },
-  { label: 'Graf Kemajuan', href: '/app' },
+  { label: 'Ujian Lisan BM (Bahagian A & B)', href: '#cara' },
+  { label: 'Ujian Lisan BI (Part 2 / 3 / KBAT)', href: '#cara' },
+  { label: 'Mistake Bank', href: '#ciri' },
+  { label: 'Graf Kemajuan', href: '#ciri' },
 ];
 
-const LEGAL_LINKS = [
-  { label: 'Dasar Privasi', href: '#' },
-  { label: 'Terma Perkhidmatan', href: '#' },
+const LEGAL_LINKS: Array<{ label: string; href: string } | { label: string; legal: 'privacy' | 'terms' }> = [
+  { label: 'Dasar Privasi', legal: 'privacy' },
+  { label: 'Terma Perkhidmatan', legal: 'terms' },
   { label: 'Hubungi Sokongan', href: 'mailto:support@mybertutur.com' },
 ];
 
-export function Footer() {
+export type LegalKind = 'privacy' | 'terms';
+
+export function Footer({ onOpenLegal }: { onOpenLegal: (kind: LegalKind) => void }) {
   return (
     <footer className="border-t border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-[#050810]">
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
@@ -85,12 +91,22 @@ export function Footer() {
             <ul className="mt-4 space-y-2.5">
               {LEGAL_LINKS.map((l) => (
                 <li key={l.label}>
-                  <a
-                    href={l.href}
-                    className="text-sm text-slate-600 transition hover:text-brand-600 dark:text-slate-400 dark:hover:text-white"
-                  >
-                    {l.label}
-                  </a>
+                  {'href' in l ? (
+                    <a
+                      href={l.href}
+                      className="text-sm text-slate-600 transition hover:text-brand-600 dark:text-slate-400 dark:hover:text-white"
+                    >
+                      {l.label}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => onOpenLegal?.(l.legal)}
+                      className="text-sm text-slate-600 transition hover:text-brand-600 dark:text-slate-400 dark:hover:text-white"
+                    >
+                      {l.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>

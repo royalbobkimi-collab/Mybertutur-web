@@ -63,10 +63,10 @@ export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup')
           {user ? (
             <div className="hidden items-center gap-3 sm:flex">
               <a
-                href="/app"
+                href="#ciri"
                 className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-500/10 dark:text-brand-200"
               >
-                Dashboard <ArrowRightIcon size={15} />
+                Latihan <ArrowRightIcon size={15} />
               </a>
               <button
                 onClick={() => void signOut()}

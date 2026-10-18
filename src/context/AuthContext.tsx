@@ -91,9 +91,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signInWithGoogle = useCallback(async () => {
+    // Redirect back to the landing page: this marketing site has no `/app`
+    // route — pointing OAuth here only reloaded index.html via the SPA
+    // fallback after login, with no session feedback at all.
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/app` },
+      options: { redirectTo: window.location.origin },
     });
     if (error) throw new Error(toFriendlyError(error));
   }, []);
