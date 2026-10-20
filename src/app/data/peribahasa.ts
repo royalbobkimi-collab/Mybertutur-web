@@ -1,0 +1,23 @@
+export type Peribahasa = { id: string; title: string; maksud: string; contoh: string; };
+export const peribahasaData: Peribahasa[] = [
+  { id: 'peribahasa-01', title: 'Bagai aur dengan tebing', maksud: 'Hubungan sangat rapat dan saling membantu.', contoh: 'Pasukan itu bermain bagai aur dengan tebing sehingga menjadi johan daerah.' },
+  { id: 'peribahasa-02', title: 'Sediakan payung sebelum hujan', maksud: 'Membuat persediaan awal sebelum musibah berlaku.', contoh: 'Keluarga itu menabung setiap bulan, sediakan payung sebelum hujan.' },
+  { id: 'peribahasa-03', title: 'Melentur buluh biarlah dari rebungnya', maksud: 'Mendidik anak bermula sejak kecil lagi.', contoh: 'Didiklah anak berakhlak mulia sejak kecil kerana melentur buluh biarlah dari rebungnya.' },
+  { id: 'peribahasa-04', title: 'Sedikit-sedikit, lama-lama jadi bukit', maksud: 'Usaha kecil yang berterusan membuahkan kejayaan besar.', contoh: 'Menabung lima ringgit sehari ibarat sedikit-sedikit, lama-lama jadi bukit.' },
+  { id: 'peribahasa-05', title: 'Hujan emas di negeri orang, hujan batu di negeri sendiri', maksud: 'Tempat sendiri tetap lebih baik walau hebat tempat orang.', contoh: 'Ali tetap pulang ke Malaysia kerana hujan emas di negeri orang, hujan batu di negeri sendiri.' },
+  { id: 'peribahasa-06', title: 'Masuk kandang kambing mengembek, masuk kandang kerbau menguak', maksud: 'Menyesuaikan diri dengan tempat dan budaya.', contoh: 'Semasa di Jepun, hormatilah budaya mereka, masuk kandang kambing mengembek, masuk kandang kerbau menguak.' },
+  { id: 'peribahasa-07', title: 'Seperti katak di bawah tempurung', maksud: 'Berfikiran sempit dan tidak tahu perkembangan sekeliling.', contoh: 'Jangan jadi seperti katak di bawah tempurung yang menolak teknologi moden.' },
+  { id: 'peribahasa-08', title: 'Bagai melepaskan batuk di tangga', maksud: 'Membuat kerja sambil lewa dan tidak bersungguh-sungguh.', contoh: 'Latihan itu disiapkan bagai melepaskan batuk di tangga, penuh kesilapan.' },
+  { id: 'peribahasa-09', title: 'Alah membeli menang memakai', maksud: 'Barang mahal tetapi berkualiti dan tahan lama lebih berbaloi.', contoh: 'Ayah membeli kasut mahal kerana alah membeli menang memakai.' },
+  { id: 'peribahasa-10', title: 'Biar mati anak, jangan mati adat', maksud: 'Adat resam mesti dipertahankan walau berhadapan cabaran.', contoh: 'Majlis itu mengekalkan tradisi lama, biar mati anak, jangan mati adat.' },
+  { id: 'peribahasa-11', title: 'Sepandai-pandai tupai melompat, akhirnya jatuh ke tanah juga', maksud: 'Orang bijak dan licik pun akhirnya melakukan kesilapan.', contoh: 'Penjenayah siber itu ditangkap juga, sepandai-pandai tupai melompat, akhirnya jatuh ke tanah juga.' },
+  { id: 'peribahasa-12', title: 'Berat sama dipikul, ringan sama dijinjing', maksud: 'Bekerjasama dan berkongsi susah senang bersama.', contoh: 'Penduduk bergotong-royong, berat sama dipikul, ringan sama dijinjing.' },
+  { id: 'peribahasa-13', title: 'Bulat air kerana pembetung, bulat manusia kerana muafakat', maksud: 'Perpaduan menjadikan usaha kukuh dan berjaya.', contoh: 'Kejayaan karnival membuktikan bulat manusia kerana muafakat.' },
+  { id: 'peribahasa-14', title: 'Carik-carik bulu ayam, akhirnya bercantum juga', maksud: 'Persaudaraan yang renggang akhirnya berbaik semula.', contoh: 'Dua beradik itu berbaik semula kerana carik-carik bulu ayam, akhirnya bercantum juga.' },
+  { id: 'peribahasa-15', title: 'Duduk sama rendah, berdiri sama tinggi', maksud: 'Semua manusia sama taraf dan dilayan adil.', contoh: 'Guru melayan semua murid secara adil, duduk sama rendah, berdiri sama tinggi.' },
+  { id: 'peribahasa-16', title: 'Genggam bara api, biar sampai jadi arang', maksud: 'Melakukan kerja dengan tekun hingga berjaya.', contoh: 'Dia belajar bersungguh-sungguh untuk SPM, genggam bara api, biar sampai jadi arang.' },
+  { id: 'peribahasa-17', title: 'Kalau tidak dipecahkan ruyung, manakan dapat sagunya', maksud: 'Tiada kejayaan tanpa usaha dan pengorbanan.', contoh: 'Murid mesti berusaha gigih kerana kalau tidak dipecahkan ruyung, manakan dapat sagunya.' },
+  { id: 'peribahasa-18', title: 'Bagai tikus membaiki labu', maksud: 'Membaiki sesuatu yang tidak diketahui lalu merosakkannya.', contoh: 'Membaikinya sendiri bagai tikus membaiki labu kerana kereta langsung tidak hidup.' },
+  { id: 'peribahasa-19', title: 'Berakit-rakit ke hulu, berenang-renang ke tepian', maksud: 'Bersusah payah dahulu untuk senang kemudian.', contoh: 'Dia bekerja keras semasa muda, berakit-rakit ke hulu, berenang-renang ke tepian.' },
+  { id: 'peribahasa-20', title: 'Jauh berjalan, luas pengalaman', maksud: 'Banyak pengalaman meluaskan pengetahuan seseorang.', contoh: 'Program pertukaran pelajar bermanfaat kerana jauh berjalan, luas pengalaman.' },
+];

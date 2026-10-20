@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useRouter } from '../app/router';
 import { ArrowRightIcon, Logo, MenuIcon, MoonIcon, SunIcon } from './Icons';
 
 const NAV_LINKS = [
@@ -13,6 +14,7 @@ const NAV_LINKS = [
 export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup') => void }) {
   const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { navigate } = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -68,6 +70,12 @@ export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup')
               >
                 {user.user_metadata?.full_name || user.email}
               </span>
+              <button
+                onClick={() => navigate('/app/academy')}
+                className="btn-primary !px-4 !py-2 text-sm"
+              >
+                Buka App
+              </button>
               <a
                 href="#ciri"
                 className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-500/10 dark:text-brand-200"
@@ -89,8 +97,11 @@ export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup')
               >
                 Log Masuk
               </button>
-              <button onClick={() => onOpenAuth('signup')} className="btn-primary !px-5 !py-2.5 text-sm">
-                Cuba Percuma
+              <button
+                onClick={() => navigate('/app/academy')}
+                className="btn-primary !px-5 !py-2.5 text-sm font-extrabold"
+              >
+                Guna App di Web
               </button>
             </div>
           )}
@@ -107,34 +118,60 @@ export function Navbar({ onOpenAuth }: { onOpenAuth: (mode: 'signin' | 'signup')
 
       {menuOpen && (
         <div className="border-t border-slate-200 bg-white px-5 py-4 md:hidden dark:border-white/10 dark:bg-[#0b1024]">
+          {/* Pautan menonjol di bahagian paling atas menu mobile */}
+          <div className="mb-3">
+            {user ? (
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/app/academy');
+                }}
+                className="btn-primary w-full text-center !py-3 text-sm font-extrabold shadow-md"
+              >
+                Buka App
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate('/app/academy');
+                }}
+                className="btn-primary w-full text-center !py-3 text-sm font-extrabold shadow-md"
+              >
+                Guna App di Web
+              </button>
+            )}
+          </div>
+
           <div className="flex flex-col gap-1">
             {NAV_LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/5"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/5"
               >
                 {l.label}
               </a>
             ))}
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex flex-col gap-2 border-t border-slate-100 pt-3 dark:border-white/10">
               {user ? (
                 <button
                   onClick={() => void signOut()}
-                  className="btn-ghost flex-1 !py-2.5 text-sm"
+                  className="btn-ghost w-full !py-2.5 text-sm"
                 >
                   Log Keluar
                 </button>
               ) : (
-                <>
-                  <button onClick={() => onOpenAuth('signin')} className="btn-ghost flex-1 !py-2.5 text-sm">
-                    Log Masuk
-                  </button>
-                  <button onClick={() => onOpenAuth('signup')} className="btn-primary flex-1 !py-2.5 text-sm">
-                    Cuba Percuma
-                  </button>
-                </>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onOpenAuth('signin');
+                  }}
+                  className="btn-ghost w-full !py-2.5 text-sm"
+                >
+                  Log Masuk
+                </button>
               )}
             </div>
           </div>

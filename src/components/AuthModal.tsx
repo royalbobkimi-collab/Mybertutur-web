@@ -4,6 +4,12 @@ import { CloseIcon } from './Icons';
 
 type Mode = 'signin' | 'signup';
 
+function isInAppBrowser(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|Snapchat|\bLine\/|; wv\)/i.test(ua);
+}
+
 export function AuthModal({
   open,
   onClose,
@@ -13,7 +19,7 @@ export function AuthModal({
   onClose: () => void;
   initialMode?: Mode;
 }) {
-  const { signIn, signUp, signInWithGoogle, isSupabaseConfigured } = useAuth();
+  const { signIn, signUp, signInWithGoogle, isSupabaseConfigured, showGoogleLogin } = useAuth();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -49,7 +55,7 @@ export function AuthModal({
       if (mode === 'signup') {
         await signUp(email.trim(), password, fullName.trim());
         setNotice(
-          'Akaun dicipta! Sila semak email anda untuk pengesahan (jika diaktifkan), kemudian log masuk.',
+          'Akaun dicipta! Sila semak e-mel anda untuk pengesahan (jika diaktifkan), kemudian log masuk.',
         );
       } else {
         await signIn(email.trim(), password);
@@ -162,6 +168,20 @@ export function AuthModal({
               {error}
             </p>
           )}
+          {error && error.includes('sudah berdaftar') && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode('signin');
+                setError(null);
+                setNotice(null);
+                void signIn(email.trim(), password).catch(() => {});
+              }}
+              className="mt-2 block w-full rounded-xl border border-[#7C3AED] bg-[#7C3AED] px-4 py-2.5 text-center text-xs font-black text-white transition hover:bg-[#6D28D9]"
+            >
+              Log Masuk
+            </button>
+          )}
           {notice && (
             <p className="rounded-xl bg-emerald-50 px-4 py-2.5 text-sm text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
               {notice}
@@ -186,38 +206,52 @@ export function AuthModal({
           </button>
         </form>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
-          <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
-          ATAU
-          <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
-        </div>
+        {isInAppBrowser() ? (
+          <div className="mt-5 rounded-2xl border border-amber-300/70 bg-amber-50 p-3.5 text-center text-xs text-amber-800 dark:border-amber-400/30 dark:bg-amber-950/30 dark:text-amber-200">
+            <span className="font-extrabold">⚠️ Google tidak berfungsi di sini.</span>
+            <p className="mt-1 leading-relaxed">
+              Google menyekat log masuk dalam paparan aplikasi sosial. Sila gunakan <strong>e-mel &amp; kata laluan</strong> di atas, atau buka di <strong>Safari / Chrome</strong>.
+            </p>
+          </div>
+        ) : (
+          showGoogleLogin ? (
+            <>
+              <div className="my-5 flex items-center gap-3 text-xs text-slate-400">
+                <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+                ATAU
+                <div className="h-px flex-1 bg-slate-200 dark:bg-white/10" />
+              </div>
 
-        <button
-          onClick={() => {
-            void signInWithGoogle();
-          }}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"
-            />
-          </svg>
-          Teruskan dengan Google
-        </button>
+              <button
+                type="button"
+                onClick={() => {
+                  void signInWithGoogle();
+                }}
+                className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"
+                  />
+                </svg>
+                Teruskan dengan Google
+              </button>
+            </>
+          ) : null
+        )}
       </div>
     </div>
   );

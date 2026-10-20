@@ -1,0 +1,23 @@
+export type SimpulanBahasa = { id: string; title: string; maksud: string; contoh: string; };
+export const simpulanBahasaData: SimpulanBahasa[] = [
+  { id: 'simpulan-01', title: 'Anak buah', maksud: 'Pengikut atau orang bawahan kepada seorang ketua.', contoh: 'Ketua kampung datang ke majlis bersama-sama anak buahnya.' },
+  { id: 'simpulan-02', title: 'Buah tangan', maksud: 'Hadiah atau cenderamata dari perjalanan jauh.', contoh: 'Ayah membawa buah tangan berupa coklat dari Langkawi.' },
+  { id: 'simpulan-03', title: 'Ulat buku', maksud: 'Orang yang sangat suka membaca buku.', contoh: 'Zarif digelar ulat buku kerana selalu ke perpustakaan.' },
+  { id: 'simpulan-04', title: 'Kaki ayam', maksud: 'Tidak memakai kasut atau selipar.', contoh: 'Kanak-kanak itu berlari kaki ayam di halaman rumah.' },
+  { id: 'simpulan-05', title: 'Rambang mata', maksud: 'Sukar membuat pilihan kerana terlalu banyak pilihan menarik.', contoh: 'Salmah rambang mata melihat pelbagai kuih di bazar Ramadan.' },
+  { id: 'simpulan-06', title: 'Anak emas', maksud: 'Orang yang paling disayangi atau diutamakan ketua.', contoh: 'Ahmad menjadi anak emas majikannya kerana rajin dan amanah.' },
+  { id: 'simpulan-07', title: 'Besar hati', maksud: 'Berasa gembira, bangga atau puas hati.', contoh: 'Ibu berasa besar hati apabila anaknya cemerlang dalam SPM.' },
+  { id: 'simpulan-08', title: 'Rendah diri', maksud: 'Merendah diri dan tidak sombong walaupun berjaya.', contoh: 'Walaupun kaya, Encik Lim tetap rendah diri dengan jiran.' },
+  { id: 'simpulan-09', title: 'Panas hati', maksud: 'Berasa marah atau geram terhadap seseorang.', contoh: 'Dia panas hati apabila difitnah rakan sekelasnya.' },
+  { id: 'simpulan-10', title: 'Tangan kosong', maksud: 'Datang tanpa membawa apa-apa hadiah.', contoh: 'Tidak elok menziarahi orang sakit dengan tangan kosong.' },
+  { id: 'simpulan-11', title: 'Curi tulang', maksud: 'Malas bekerja dan suka mengelat.', contoh: 'Pekerja yang suka curi tulang itu akhirnya dibuang majikan.' },
+  { id: 'simpulan-12', title: 'Pecah perut', maksud: 'Ketawa dengan kuat kerana sesuatu yang sangat lucu.', contoh: 'Satu kelas pecah perut mendengar lawak Cikgu Azman.' },
+  { id: 'simpulan-13', title: 'Naik angin', maksud: 'Menjadi marah secara tiba-tiba.', contoh: 'Ayah naik angin apabila adik memecahkan pasu bunganya.' },
+  { id: 'simpulan-14', title: 'Putih mata', maksud: 'Kecewa dan hampa kerana harapan tidak tercapai.', contoh: 'Dia putih mata apabila biasiswa yang dipohon tidak lulus.' },
+  { id: 'simpulan-15', title: 'Berat tulang', maksud: 'Malas dan tidak suka melakukan kerja.', contoh: 'Pemuda yang berat tulang sukar mendapat pekerjaan baik.' },
+  { id: 'simpulan-16', title: 'Murah hati', maksud: 'Pemurah dan suka membantu orang lain.', contoh: 'Puan Maria yang murah hati sering menyumbang ke rumah anak yatim.' },
+  { id: 'simpulan-17', title: 'Tajam akal', maksud: 'Bijak berfikir dan cepat mencari penyelesaian.', contoh: 'Pelajar yang tajam akal itu menyelesaikan soalan paling sukar.' },
+  { id: 'simpulan-18', title: 'Kaki bangku', maksud: 'Hanya menjadi penonton dan tidak ikut serta.', contoh: 'Dia hanya menjadi kaki bangku semasa perlawanan antara kelas.' },
+  { id: 'simpulan-19', title: 'Lidah bercabang', maksud: 'Tidak jujur dan suka berdusta atau memfitnah.', contoh: 'Jangan percaya kata-katanya kerana dia lidah bercabang.' },
+  { id: 'simpulan-20', title: 'Anak dagang', maksud: 'Orang luar yang menetap di sesuatu tempat.', contoh: 'Anak dagang itu kini berjaya membuka perniagaan di Kuala Lumpur.' },
+];

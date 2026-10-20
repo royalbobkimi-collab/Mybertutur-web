@@ -1,8 +1,11 @@
 import { ArrowRightIcon, MicIcon } from './Icons';
 import { Reveal } from './Reveal';
+import { useRouter } from '../app/router';
 
 /** Final conversion banner before the footer. */
-export function CTA({ onOpenAuth }: { onOpenAuth: (mode: 'signup') => void }) {
+export function CTA({ onOpenAuth }: { onOpenAuth?: (mode: 'signup') => void }) {
+  void onOpenAuth;
+  const { navigate } = useRouter();
   return (
     <section className="px-5 pb-20 sm:px-8">
       <Reveal className="mx-auto max-w-5xl">
@@ -32,10 +35,10 @@ export function CTA({ onOpenAuth }: { onOpenAuth: (mode: 'signup') => void }) {
 
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <button
-                onClick={() => onOpenAuth('signup')}
+                onClick={() => navigate('/app/academy')}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-3.5 font-bold text-brand-700 shadow-xl transition-all duration-200 hover:scale-105 hover:bg-slate-50 active:scale-100 sm:w-auto"
               >
-                Mula Latihan Percuma <ArrowRightIcon size={18} />
+                Guna App di Web (Percuma) <ArrowRightIcon size={18} />
               </button>
               <a
                 href="#ciri"

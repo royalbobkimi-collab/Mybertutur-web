@@ -1,5 +1,6 @@
 import { BookIcon, ChartIcon, MicIcon, SparkIcon, TargetIcon } from './Icons';
 import { Reveal } from './Reveal';
+import { useRouter } from '../app/router';
 
 /** Key product capabilities, matching the four pillars of the app. */
 const FEATURES = [
@@ -34,6 +35,7 @@ const FEATURES = [
 ];
 
 export function Features() {
+  const { navigate } = useRouter();
   return (
     <section id="ciri" className="section">
       <Reveal className="mx-auto max-w-2xl text-center">
@@ -95,6 +97,67 @@ export function Features() {
           </div>
         </div>
       </Reveal>
+      {/* Seksyen Ringkas Cuba Sekarang */}
+      <div className="mt-14 border-t border-slate-200/60 pt-8 dark:border-white/10">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <span className="eyebrow">
+            <MicIcon size={14} /> Cuba Sekarang
+          </span>
+          <h3 className="mt-3 text-2xl font-extrabold text-slate-900 sm:text-3xl dark:text-white">
+            Pilih Ujian Lisan & Mula Berlatih
+          </h3>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            Akses terus modul peperiksaan SPM sebenar dan dapatkan penilaian AI dalam beberapa minit.
+          </p>
+        </Reveal>
+
+        <div className="mx-auto mt-8 grid max-w-4xl gap-5 sm:grid-cols-2">
+          <Reveal delay={60}>
+            <button
+              onClick={() => navigate('/app/testbm')}
+              className="glass group flex w-full flex-col justify-between rounded-3xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-violet-500 hover:shadow-glow"
+            >
+              <div>
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-md">
+                  <MicIcon size={20} />
+                </div>
+                <h4 className="mt-4 text-xl font-extrabold text-slate-900 group-hover:text-violet-600 dark:text-white dark:group-hover:text-violet-400">
+                  Ujian Lisan BM
+                </h4>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  Latihan Bahagian A (Membaca) dan Bahagian B (Perbincangan) berformat SPM dengan penilaian sebutan dan tatabahasa AI.
+                </p>
+              </div>
+              <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-extrabold text-violet-600 dark:text-violet-400">
+                Mula Ujian BM →
+              </div>
+            </button>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <button
+              onClick={() => navigate('/app/testbi')}
+              className="glass group flex w-full flex-col justify-between rounded-3xl p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-sky-500 hover:shadow-glow"
+            >
+              <div>
+                <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-cyan-500 text-white shadow-md">
+                  <MicIcon size={20} />
+                </div>
+                <h4 className="mt-4 text-xl font-extrabold text-slate-900 group-hover:text-sky-500 dark:text-white dark:group-hover:text-sky-400">
+                  English Speaking
+                </h4>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                  Practice SPM 1119/3 Speaking Test Part 2, Part 3 mind map discussions, and HOTS questions with instant AI feedback.
+                </p>
+              </div>
+              <div className="mt-5 inline-flex items-center gap-1.5 text-sm font-extrabold text-sky-600 dark:text-sky-400">
+                Start Speaking Test →
+              </div>
+            </button>
+          </Reveal>
+        </div>
+      </div>
+
     </section>
   );
 }

@@ -34,3 +34,5 @@ pnpm-debug.log*
 
 # tsc build artifact
 tsconfig.tsbuildinfo
+.vercel
+.env*

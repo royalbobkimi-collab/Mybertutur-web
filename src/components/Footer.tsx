@@ -1,4 +1,5 @@
 import { Logo } from './Icons';
+import { useRouter } from '../app/router';
 
 const PRODUCT_LINKS = [
   { label: 'Ciri-ciri', href: '#ciri' },
@@ -7,15 +8,11 @@ const PRODUCT_LINKS = [
   { label: 'Ulasan', href: '#ulasan' },
 ];
 
-// Exam-module links point at matching landing sections — the interactive app
-// lives in the MyBertutur mobile app, so there is deliberately no `/app`
-// route on this marketing site (a dead `/app` href only served the SPA
-// fallback / a confusing reload).
 const EXAM_LINKS = [
-  { label: 'Ujian Lisan BM (Bahagian A & B)', href: '#cara' },
-  { label: 'Ujian Lisan BI (Part 2 / 3 / KBAT)', href: '#cara' },
-  { label: 'Mistake Bank', href: '#ciri' },
-  { label: 'Graf Kemajuan', href: '#ciri' },
+  { label: 'Ujian Lisan BM (Bahagian A & B)', route: '/app/testbm' },
+  { label: 'Ujian Lisan BI (Part 2 / 3 / KBAT)', route: '/app/testbi' },
+  { label: 'Mistake Bank', route: '/app/mistake-bank' },
+  { label: 'Graf Kemajuan', route: '/app/progress' },
 ];
 
 const LEGAL_LINKS: Array<{ label: string; href: string } | { label: string; legal: 'privacy' | 'terms' }> = [
@@ -27,6 +24,7 @@ const LEGAL_LINKS: Array<{ label: string; href: string } | { label: string; lega
 export type LegalKind = 'privacy' | 'terms';
 
 export function Footer({ onOpenLegal }: { onOpenLegal: (kind: LegalKind) => void }) {
+  const { navigate } = useRouter();
   return (
     <footer className="border-t border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-[#050810]">
       <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
@@ -72,12 +70,13 @@ export function Footer({ onOpenLegal }: { onOpenLegal: (kind: LegalKind) => void
             <ul className="mt-4 space-y-2.5">
               {EXAM_LINKS.map((l) => (
                 <li key={l.label}>
-                  <a
-                    href={l.href}
-                    className="text-sm text-slate-600 transition hover:text-brand-600 dark:text-slate-400 dark:hover:text-white"
+                  <button
+                    type="button"
+                    onClick={() => navigate(l.route)}
+                    className="text-left text-sm text-slate-600 transition hover:text-brand-600 dark:text-slate-400 dark:hover:text-white"
                   >
                     {l.label}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>

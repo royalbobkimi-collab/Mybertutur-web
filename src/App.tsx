@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { AppOnWeb } from './components/AppOnWeb';
 import { Features } from './components/Features';
 import { HowItWorks } from './components/HowItWorks';
 import { Reviews } from './components/Testimonials';
@@ -11,6 +12,10 @@ import { Footer, type LegalKind } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
 import { LegalDialog } from './components/LegalDialog';
 import { CloseIcon } from './components/Icons';
+import { RouterProvider, useRouter as useAppRouter } from './app/router';
+import { LanguageProvider } from './app/i18n';
+import { PreferencesProvider } from './app/preferences';
+import { AppRoutes } from './app/routes';
 
 type AuthMode = 'signin' | 'signup';
 
@@ -42,10 +47,55 @@ function AuthNoticeBanner() {
   );
 }
 
-export default function App() {
+function MobileStickyBar() {
+  const { navigate } = useAppRouter();
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200/80 bg-white/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] shadow-2xl backdrop-blur-md md:hidden dark:border-white/10 dark:bg-[#070b18]/95">
+      <button
+        type="button"
+        onClick={() => navigate('/app/academy')}
+        className="btn-primary w-full !py-3.5 text-center text-sm font-extrabold shadow-glow"
+      >
+        Guna App di Web (Percuma) →
+      </button>
+    </div>
+  );
+}
+
+function LandingPage({
+  onOpenAuth,
+  onOpenLegal,
+}: {
+  onOpenAuth: (mode: AuthMode) => void;
+  onOpenLegal: (kind: LegalKind) => void;
+}) {
+  return (
+    <div className="min-h-screen bg-white pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-slate-800 md:pb-0 dark:bg-[#070b18] dark:text-slate-100">
+      <Navbar onOpenAuth={onOpenAuth} />
+      <AuthNoticeBanner />
+
+      <main>
+        <Hero onOpenAuth={onOpenAuth} />
+        <AppOnWeb />
+        <Features />
+        <HowItWorks />
+        <FAQ />
+        <CTA onOpenAuth={onOpenAuth} />
+        {/* Reviews deliberately sit last, after all other content. */}
+        <Reviews />
+      </main>
+
+      <Footer onOpenLegal={onOpenLegal} />
+      <MobileStickyBar />
+    </div>
+  );
+}
+
+function Root() {
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<AuthMode>('signin');
   const [legalKind, setLegalKind] = useState<LegalKind | null>(null);
+  const { path } = useAppRouter();
 
   const openAuth = useCallback((mode: AuthMode) => {
     setAuthMode(mode);
@@ -55,27 +105,32 @@ export default function App() {
   const closeAuth = useCallback(() => setAuthOpen(false), []);
   const closeLegal = useCallback(() => setLegalKind(null), []);
 
+  const isAppRoute = path.startsWith('/app');
+
+  return (
+    <>
+      {isAppRoute ? (
+        <LanguageProvider>
+          <PreferencesProvider>
+            <AppRoutes />
+          </PreferencesProvider>
+        </LanguageProvider>
+      ) : (
+        <LandingPage onOpenAuth={openAuth} onOpenLegal={setLegalKind} />
+      )}
+
+      <AuthModal open={authOpen} onClose={closeAuth} initialMode={authMode} />
+      <LegalDialog kind={legalKind} onClose={closeLegal} />
+    </>
+  );
+}
+
+export default function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-white text-slate-800 dark:bg-[#070b18] dark:text-slate-100">
-        <Navbar onOpenAuth={openAuth} />
-        <AuthNoticeBanner />
-
-        <main>
-          <Hero onOpenAuth={openAuth} />
-          <Features />
-          <HowItWorks />
-          <FAQ />
-          <CTA onOpenAuth={openAuth} />
-          {/* Reviews deliberately sit last, after all other content. */}
-          <Reviews />
-        </main>
-
-        <Footer onOpenLegal={setLegalKind} />
-
-        <AuthModal open={authOpen} onClose={closeAuth} initialMode={authMode} />
-        <LegalDialog kind={legalKind} onClose={closeLegal} />
-      </div>
+      <RouterProvider>
+        <Root />
+      </RouterProvider>
     </AuthProvider>
   );
 }

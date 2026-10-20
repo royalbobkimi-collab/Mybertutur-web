@@ -27,6 +27,8 @@ type AuthContextValue = {
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** Whether Google OAuth login is enabled (from VITE_ENABLE_GOOGLE_LOGIN). */
+  showGoogleLogin: boolean;
 };
 
 /**
@@ -76,7 +78,7 @@ function toFriendlyError(err: unknown): string {
     return 'Email atau kata laluan salah. Sila cuba lagi.';
   }
   if (/user already registered/i.test(message)) {
-    return 'Email ini sudah berdaftar. Sila log masuk.';
+    return 'E-mel ini sudah berdaftar. Sila log masuk.';
   }
   if (/password should be/i.test(message)) {
     return 'Kata laluan mestilah sekurang-kurangnya 6 aksara.';
@@ -91,6 +93,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [authNotice, setAuthNotice] = useState<string | null>(null);
+  // FIX (Task 3a): Toggle Google login on/off via VITE_ENABLE_GOOGLE_LOGIN.
+  // Default (undefined/false) = Google login hidden. True = show the button.
+  const showGoogleLogin = import.meta.env.VITE_ENABLE_GOOGLE_LOGIN === 'true';
 
   useEffect(() => {
     let mounted = true;
@@ -168,8 +173,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       signInWithGoogle,
       signOut,
+      showGoogleLogin,
     }),
-    [session, loading, authNotice, clearAuthNotice, signIn, signUp, signInWithGoogle, signOut],
+    [session, loading, authNotice, clearAuthNotice, signIn, signUp, signInWithGoogle, signOut, showGoogleLogin],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

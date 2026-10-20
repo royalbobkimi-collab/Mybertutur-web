@@ -1,5 +1,6 @@
 import { ArrowRightIcon, CheckIcon, MicIcon, PlayIcon, SparkIcon } from './Icons';
 import { Reveal } from './Reveal';
+import { useRouter } from '../app/router';
 
 const STATS = [
   { value: 'RM0', label: 'Sepenuhnya Percuma' },
@@ -7,7 +8,9 @@ const STATS = [
   { value: 'AI', label: 'Penilaian Masa Nyata' },
 ];
 
-export function Hero({ onOpenAuth }: { onOpenAuth: (mode: 'signup') => void }) {
+export function Hero({ onOpenAuth }: { onOpenAuth?: (mode: 'signup') => void }) {
+  void onOpenAuth;
+  const { navigate } = useRouter();
   return (
     <section className="relative overflow-hidden pt-28 sm:pt-36">
       <div
@@ -46,13 +49,19 @@ export function Hero({ onOpenAuth }: { onOpenAuth: (mode: 'signup') => void }) {
 
           <Reveal delay={240}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <button onClick={() => onOpenAuth('signup')} className="btn-primary text-base">
-                Cuba Percuma Sekarang <ArrowRightIcon size={18} />
+              <button
+                onClick={() => navigate('/app/academy')}
+                className="btn-primary text-base font-extrabold"
+              >
+                Guna App di Web (Percuma) <ArrowRightIcon size={18} />
               </button>
               <a href="#cara" className="btn-ghost text-base">
-                <PlayIcon size={16} /> Lihat Cara Ia Berfungsi
+                <PlayIcon size={16} /> Lihat Cara Berfungsi
               </a>
             </div>
+            <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              ⚡ Tiada muat turun. Buka terus dari pelayar web anda.
+            </p>
           </Reveal>
 
           <Reveal delay={320}>
