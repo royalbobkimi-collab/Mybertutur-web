@@ -3,19 +3,15 @@ import { useState, useEffect, useRef } from 'react';
 import { AppShell } from '../shell';
 import { InfoDialog, MetricBar } from '../dialogs';
 import { useRouter } from '../router';
-import { useAuth } from '../../context/AuthContext';
 import { BI_SPEAKING_2025_SETS } from '../data/biSpeaking2025';
 import { useBiTest } from './useBiTest';
 import { BI_SECTIONS, BI_PREP_SECONDS, biSetLabel, pickRandomBiSetIndex } from './testbiData';
-import { fetchDailyTestStatus, type DailyTestStatus } from '../lib/data';
 import { scoreColor, scoreLabel } from './testbmData';
 import { Part1Card, Part2Card, Part3Card, Part3DecisionCard, biPromptFor, fmt } from './TestBIcards';
 
 export function TestBI() {
   const { navigate } = useRouter();
-  const { user } = useAuth();
   const t = useBiTest();
-  const [dailyStatus, setDailyStatus] = useState<DailyTestStatus | null>(null);
   const [setIndex, setSetIndex] = useState(() => pickRandomBiSetIndex(BI_SPEAKING_2025_SETS.length));
   const [candidate] = useState<'A' | 'B'>(() => (Math.random() < 0.5 ? 'A' : 'B'));
   const [prepTimeLeft, setPrepTimeLeft] = useState(BI_PREP_SECONDS);
@@ -26,13 +22,6 @@ export function TestBI() {
   const result = t.finalResult;
   const step = BI_SECTIONS.indexOf(t.activeSection) + 1;
   const stoppedRef = useRef(false);
-
-  useEffect(() => {
-    if (!user) return;
-    fetchDailyTestStatus(user.id)
-      .then(setDailyStatus)
-      .catch((err) => console.warn('[testbi] limit check error:', err));
-  }, [user]);
 
   useEffect(() => {
     if (t.isRecording) stoppedRef.current = false;
@@ -217,25 +206,6 @@ export function TestBI() {
           </div>
         )}
 
-        {/* Daily Limit Reached Warning Banner */}
-        {dailyStatus?.biDone && (
-          <div className="rounded-[22px] border border-amber-500/30 bg-amber-500/10 p-4 text-center">
-            <div className="text-xs font-black text-amber-700 dark:text-amber-300">
-              ⚠️ Had Ujian Harian Dicapai (1/1 Selesai)
-            </div>
-            <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
-              Anda telah menyelesaikan 1 Ujian Lisan BI untuk hari ini. Kuota akan diperbaharui pada 12:00 AM waktu Malaysia (MYT). Sila kembali esok untuk latihan seterusnya.
-            </p>
-            <button
-              type="button"
-              onClick={() => navigate('/app')}
-              className="mt-3 rounded-full bg-[#7C3AED] px-4 py-1.5 text-xs font-black text-white shadow-sm"
-            >
-              Kembali ke Dashboard
-            </button>
-          </div>
-        )}
-
         {/* Recording Card & Buttons */}
         <div className="rounded-[24px] border border-slate-200/80 bg-white p-5 text-center shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
           {isPrepping ? (
@@ -258,21 +228,6 @@ export function TestBI() {
               <button
                 type="button"
                 onClick={() => {
-                  if (dailyStatus?.biDone) {
-                    t.setInfo({
-                      icon: 'warning',
-                      title: 'Limit Test Reached',
-                      message: 'Limit test for today, come back tomorrow',
-                      primaryText: 'Dashboard',
-                      onPrimary: () => {
-                        t.setInfo(null);
-                        navigate('/app');
-                      },
-                      secondaryText: 'Close',
-                      onSecondary: () => t.setInfo(null),
-                    });
-                    return;
-                  }
                   // HOTS / Part 3 · Decision is spontaneous in real SPM (no prep time given).
                   // Candidates prepare only for Part 2 (Individual) and Part 3 (Mind map discussion).
                   const needsPrep =
@@ -296,7 +251,7 @@ export function TestBI() {
                     void t.start();
                   }
                 }}
-                disabled={t.isAnalyzing || dailyStatus?.biDone}
+                disabled={t.isAnalyzing}
                 className="mx-auto mt-3 flex h-16 w-16 items-center justify-center rounded-full bg-[#7C3AED] text-2xl text-white shadow-[0_8px_24px_rgba(124,58,237,0.4)] transition hover:bg-[#6D28D9] active:scale-95 disabled:opacity-50"
               >
                 🎤
@@ -304,8 +259,6 @@ export function TestBI() {
               <p className="mt-2 text-xs font-bold text-slate-500 dark:text-[#94A3B8]">
                 {t.isAnalyzing
                   ? 'Analyzing with Gemini AI…'
-                  : dailyStatus?.biDone
-                  ? 'Had harian dicapai · Kembali esok'
                   : t.activeSection === 'Part 3 · Decision'
                   ? 'Tap microphone to speak spontaneously (1 min limit)'
                   : 'Tap microphone to begin (1 min limit)'}

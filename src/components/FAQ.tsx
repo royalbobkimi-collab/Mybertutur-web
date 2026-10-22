@@ -17,7 +17,7 @@ const FAQS = [
   },
   {
     q: 'Berapakah kosnya?',
-    a: 'MyBertutur adalah percuma sepenuhnya — tiada langganan, tiada bayaran dan tiada ciri dikunci di belakang plan berbayar. Untuk memastikan ciri AI kekal tersedia dan pantas untuk semua pelajar, penggunaan penilaian AI tertakluk pada had penggunaan harian yang munasabah.',
+    a: 'MyBertutur adalah percuma sepenuhnya — tiada langganan, tiada bayaran dan tiada ciri dikunci di belakang plan berbayar. Anda boleh membuat latihan ujian lisan tanpa had pada bila-bila masa.',
   },
   {
     q: 'Apakah "Mistake Bank" itu?',

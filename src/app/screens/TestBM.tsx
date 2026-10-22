@@ -3,9 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { AppShell } from '../shell';
 import { InfoDialog, MetricBar } from '../dialogs';
 import { useRouter } from '../router';
-import { useAuth } from '../../context/AuthContext';
 import { formatTimer } from '../lib/audio';
-import { fetchDailyTestStatus, type DailyTestStatus } from '../lib/data';
 import { useBmTest } from './useBmTest';
 import {
   SECTIONS,
@@ -17,17 +15,8 @@ import {
 
 export function TestBM() {
   const { navigate } = useRouter();
-  const { user } = useAuth();
   const t = useBmTest();
-  const [dailyStatus, setDailyStatus] = useState<DailyTestStatus | null>(null);
   const stoppedRef = useRef(false);
-
-  useEffect(() => {
-    if (!user) return;
-    fetchDailyTestStatus(user.id)
-      .then(setDailyStatus)
-      .catch((err) => console.warn('[testbm] limit check error:', err));
-  }, [user]);
 
   // Timer: SATU sumber masa (countdown dari 300 saat / 05:00 ke 00:00)
   const [countdown, setCountdown] = useState(300);
@@ -393,25 +382,6 @@ export function TestBM() {
         </div>
       )}
 
-      {/* Daily Limit Reached Warning Banner */}
-      {dailyStatus?.bmDone && (
-        <div className="mt-4 rounded-[22px] border border-amber-500/30 bg-amber-500/10 p-4 text-center">
-          <div className="text-xs font-black text-amber-700 dark:text-amber-300">
-            ⚠️ Had Ujian Harian Dicapai (1/1 Selesai)
-          </div>
-          <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
-            Anda telah menyelesaikan 1 Ujian Lisan BM untuk hari ini. Kuota akan diperbaharui pada 12:00 AM waktu Malaysia (MYT). Sila kembali esok untuk latihan seterusnya.
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/app')}
-            className="mt-3 rounded-full bg-[#7C3AED] px-4 py-1.5 text-xs font-black text-white shadow-sm"
-          >
-            Kembali ke Dashboard
-          </button>
-        </div>
-      )}
-
       {/* 8. Butang Kawalan Rakaman — Diletakkan dalam aliran halaman dengan ruang bawah yang mencukupi dari bottom navigation */}
       <div className="mt-6 flex gap-2 pb-6">
         {t.isAnalyzing ? (
@@ -424,31 +394,11 @@ export function TestBM() {
         ) : !t.isRecording ? (
           <button
             onClick={() => {
-              if (dailyStatus?.bmDone) {
-                t.setInfo({
-                  icon: 'warning',
-                  title: 'Limit Test Reached',
-                  message: 'Limit test for today, come back tomorrow',
-                  primaryText: 'Dashboard',
-                  onPrimary: () => {
-                    t.setInfo(null);
-                    navigate('/app');
-                  },
-                  secondaryText: 'Tutup',
-                  onSecondary: () => t.setInfo(null),
-                });
-                return;
-              }
               void t.start();
             }}
-            disabled={dailyStatus?.bmDone}
-            className={`flex-1 rounded-[20px] py-4 text-base font-black text-white shadow-[0_6px_20px_rgba(245,158,11,0.35)] transition ${
-              dailyStatus?.bmDone
-                ? 'cursor-not-allowed bg-slate-400 opacity-60'
-                : 'bg-[#F59E0B] hover:bg-[#D97706] active:scale-[0.98]'
-            }`}
+            className="flex-1 rounded-[20px] bg-[#F59E0B] py-4 text-base font-black text-white shadow-[0_6px_20px_rgba(245,158,11,0.35)] transition hover:bg-[#D97706] active:scale-[0.98]"
           >
-            {dailyStatus?.bmDone ? 'Had Harian Dicapai (Kembali Esok)' : '🎙️ Mula Rakaman (05:00)'}
+            🎙️ Mula Rakaman (05:00)
           </button>
         ) : (
           <button

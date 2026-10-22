@@ -492,85 +492,24 @@ export function getMalaysiaDateString(): string {
 }
 
 /**
- * Semak status had harian ujian untuk pengguna semasa secara selamat dari Supabase.
- * Reset setiap tengah malam waktu Malaysia (Asia/Kuala_Lumpur).
+ * Status had ujian harian untuk pengguna.
+ * Had ujian telah DIBUANG sepenuhnya — pengguna boleh membuat latihan tanpa had.
+ * Sentiasa mengembalikan bmDone: false dan biDone: false.
  */
-export async function fetchDailyTestStatus(userId: string): Promise<DailyTestStatus> {
+export async function fetchDailyTestStatus(_userId: string): Promise<DailyTestStatus> {
   const klDate = getMalaysiaDateString();
-  let bmDone = false;
-  let biDone = false;
-
-  // 1) Cuba RPC server-side jika migrasi 20261020 telah dijalankan di Supabase
-  try {
-    const { data: rpcData, error: rpcErr } = await supabase.rpc('my_daily_test_status');
-    if (!rpcErr && Array.isArray(rpcData) && rpcData.length > 0) {
-      const row = rpcData[0] as { kl_date?: string; bm_done?: boolean; bi_done?: boolean };
-      if (row.bm_done) bmDone = true;
-      if (row.bi_done) biDone = true;
-    }
-  } catch {
-    /* fallback to table checks */
-  }
-
-  // 2) Semakan jadual daily_test_completions
-  try {
-    const { data: completions, error: cErr } = await supabase
-      .from('daily_test_completions')
-      .select('subject')
-      .eq('user_id', userId)
-      .eq('kl_date', klDate);
-
-    if (!cErr && Array.isArray(completions)) {
-      for (const row of completions) {
-        if (row.subject === 'bm') bmDone = true;
-        if (row.subject === 'bi') biDone = true;
-      }
-    }
-  } catch {
-    /* fallback to submissions check */
-  }
-
-  // 3) Semakan telus jadual submissions untuk hari ini (waktu Malaysia UTC+8)
-  // Memastikan had sentiasa berkuatkuasa walaupun RPC/daily_test_completions belum dikemas kini
-  if (!bmDone || !biDone) {
-    try {
-      const [year, month, day] = klDate.split('-').map(Number);
-      const startOfKlDayUtc = new Date(Date.UTC(year, month - 1, day, 0 - 8, 0, 0)).toISOString();
-      const endOfKlDayUtc = new Date(Date.UTC(year, month - 1, day, 23 - 8, 59, 59, 999)).toISOString();
-
-      const { data: subs, error: subsErr } = await supabase
-        .from('submissions')
-        .select('latihan_id, score, created_at')
-        .eq('user_id', userId)
-        .gte('created_at', startOfKlDayUtc)
-        .lte('created_at', endOfKlDayUtc);
-
-      if (!subsErr && Array.isArray(subs)) {
-        for (const s of subs) {
-          if (s.score != null && s.score > 0) {
-            if (s.latihan_id === 1) bmDone = true;
-            if (s.latihan_id === 2) biDone = true;
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('[daily-limit] Submissions check error:', err);
-    }
-  }
-
-  return { klDate, bmDone, biDone };
+  return { klDate, bmDone: false, biDone: false };
 }
 
 /**
- * Tuntut kuota ujian harian sebaik sahaja ujian berjaya diserahkan.
- * Menghalang sebarang cubaan serentak di peringkat server.
+ * Rekod penyelesaian ujian harian (pilihan untuk telemetri/sejarah).
+ * Tidak lagi menguatkuasakan sebarang had kuota — sentiasa berjaya.
  */
 export async function claimDailyTestCompletion(
   subject: 'bm' | 'bi',
   submissionId?: number | string | null,
 ): Promise<{ success: boolean; alreadyDone: boolean }> {
   try {
-    // Hantar submissionId null jika bukan integer untuk elak ralat sintaks bigint di Postgres
     const safeSubmissionId =
       typeof submissionId === 'number' && Number.isInteger(submissionId)
         ? submissionId
@@ -581,37 +520,10 @@ export async function claimDailyTestCompletion(
       p_submission_id: safeSubmissionId,
     });
     if (!error && typeof data === 'boolean') {
-      return { success: data, alreadyDone: !data };
+      return { success: true, alreadyDone: false };
     }
   } catch {
-    /* RPC might not be deployed yet */
-  }
-
-  // Cuba insert terus ke jadual daily_test_completions jika RPC belum tersedia
-  try {
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData?.user;
-    if (user) {
-      const klDate = getMalaysiaDateString();
-      const payload: { user_id: string; subject: string; kl_date: string; submission_id?: number | null } = {
-        user_id: user.id,
-        subject,
-        kl_date: klDate,
-      };
-      if (typeof submissionId === 'number' && Number.isInteger(submissionId)) {
-        payload.submission_id = submissionId;
-      }
-      const { error: insErr } = await supabase.from('daily_test_completions').insert(payload);
-      if (!insErr) {
-        return { success: true, alreadyDone: false };
-      }
-      if (insErr.code === '23505') {
-        // Unique violation — limit reached for today
-        return { success: false, alreadyDone: true };
-      }
-    }
-  } catch (err) {
-    console.warn('[daily-limit] Direct claim insert failed:', err);
+    /* Telemetry failure does not block the user */
   }
 
   return { success: true, alreadyDone: false };

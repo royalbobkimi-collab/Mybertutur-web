@@ -1,25 +1,13 @@
-import { useState, useEffect } from 'react';
 import { AppShell } from '../shell';
 import { useRouter } from '../router';
 import { useLanguage } from '../i18n';
-import { useAuth } from '../../context/AuthContext';
 import { useTestProgress } from '../hooks';
-import { fetchDailyTestStatus, type DailyTestStatus } from '../lib/data';
 import { ChevronRightIcon, MicIcon, GlobeIcon, BookOpenIcon } from '../components/Icons';
 
 export function Academy() {
   const { navigate } = useRouter();
   const { isEnglish } = useLanguage();
-  const { user } = useAuth();
   const progress = useTestProgress();
-  const [dailyStatus, setDailyStatus] = useState<DailyTestStatus | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    fetchDailyTestStatus(user.id)
-      .then(setDailyStatus)
-      .catch((err) => console.warn('[academy] daily limit fetch error:', err));
-  }, [user]);
 
   return (
     <AppShell activeRoute="/app/academy">
@@ -68,20 +56,11 @@ export function Academy() {
                   <div className="text-sm font-black text-slate-900 dark:text-[#F8FAFC]">
                     {isEnglish ? 'Malay Oral Test (UBBM)' : 'Ujian Lisan BM (UBBM)'}
                   </div>
-                  {dailyStatus && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                        dailyStatus.bmDone
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                      }`}
-                    >
-                      {dailyStatus.bmDone ? 'Selesai Hari Ini' : '1/1 Tersedia'}
-                    </span>
-                  )}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-[#94A3B8]">
-                  Bahagian A &amp; B dengan pemarkahan AI serta-merta. Had 1 ujian sehari.
+                  {isEnglish
+                    ? 'Part A & B with instant AI evaluation. Unlimited practice.'
+                    : 'Bahagian A & B dengan pemarkahan AI serta-merta. Latihan tanpa had.'}
                 </div>
               </div>
             </div>
@@ -102,20 +81,11 @@ export function Academy() {
                   <div className="text-sm font-black text-slate-900 dark:text-[#F8FAFC]">
                     {isEnglish ? 'English Oral Test (UBBI)' : 'Ujian Lisan BI (UBBI)'}
                   </div>
-                  {dailyStatus && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                        dailyStatus.biDone
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                          : 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                      }`}
-                    >
-                      {dailyStatus.biDone ? 'Selesai Hari Ini' : '1/1 Tersedia'}
-                    </span>
-                  )}
                 </div>
                 <div className="text-xs text-slate-500 dark:text-[#94A3B8]">
-                  Part 1, Part 2, Part 3 &amp; Decision. Had 1 ujian sehari.
+                  {isEnglish
+                    ? 'Part 1, Part 2, Part 3 & Decision. Unlimited practice.'
+                    : 'Part 1, Part 2, Part 3 & Decision. Latihan tanpa had.'}
                 </div>
               </div>
             </div>

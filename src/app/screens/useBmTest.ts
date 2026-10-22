@@ -7,7 +7,6 @@ import {
   saveMistakes,
   saveTestResult,
   claimDailyTestCompletion,
-  fetchDailyTestStatus,
   type MistakeBankRow,
 } from '../lib/data';
 import { startWebRecording, stopWebRecording } from '../lib/audio';
@@ -117,47 +116,6 @@ export function useBmTest() {
 
   const start = useCallback(async () => {
     if (isAnalyzing || isRecording) return;
-
-    // Sekat permulaan jika had harian telah dicapai (1 UBBM sehari waktu Malaysia)
-    if (user) {
-      try {
-        const status = await fetchDailyTestStatus(user.id);
-        if (status.bmDone) {
-          setInfo({
-            icon: 'warning',
-            title: 'Limit Test Reached',
-            message: 'Limit test for today, come back tomorrow',
-            primaryText: 'Dashboard',
-            onPrimary: () => {
-              setInfo(null);
-              if (typeof window !== 'undefined') window.location.href = '/app';
-            },
-            secondaryText: 'Tutup',
-            onSecondary: () => setInfo(null),
-          });
-          return;
-        }
-      } catch (e) {
-        console.warn('[testbm] daily limit pre-check error:', e);
-        // Fail-closed: elak mula ujian sekiranya status kuota tidak dapat disahkan
-        setInfo({
-          icon: 'warning',
-          title: 'Pengesahan Had Gagal',
-          message: 'Status had ujian harian tidak dapat disahkan buat masa ini. Sila periksa sambungan internet dan cuba sebentar lagi.',
-          primaryText: 'Cuba Lagi',
-          onPrimary: () => {
-            setInfo(null);
-            void start();
-          },
-          secondaryText: 'Dashboard',
-          onSecondary: () => {
-            setInfo(null);
-            if (typeof window !== 'undefined') window.location.href = '/app';
-          },
-        });
-        return;
-      }
-    }
 
     try {
       // getUserMedia dipanggil HANYA sekali dalam handler klik ini

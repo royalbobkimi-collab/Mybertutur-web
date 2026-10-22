@@ -7,8 +7,6 @@ import { useTestProgress } from '../hooks';
 import {
   fetchUserTestStats,
   fetchUnmasteredMistakes,
-  fetchDailyTestStatus,
-  type DailyTestStatus,
 } from '../lib/data';
 import { ChevronRightIcon, BookOpenIcon, CloseIcon } from '../components/Icons';
 import { LearningFocusCard } from '../components/LearningFocusCard';
@@ -34,7 +32,6 @@ export function Dashboard() {
   const [tallies, setTallies] = useState<CategoryTally[]>([]);
   const [totalMistakes, setTotalMistakes] = useState(0);
   const [showPwaTip, setShowPwaTip] = useState(false);
-  const [dailyStatus, setDailyStatus] = useState<DailyTestStatus | null>(null);
 
   useEffect(() => {
     setShowPwaTip(isIosSafari());
@@ -44,10 +41,6 @@ export function Dashboard() {
     if (!user?.id) return;
     let active = true;
     setStats((s) => ({ ...s, loading: true }));
-
-    void fetchDailyTestStatus(user.id)
-      .then((st) => { if (active) setDailyStatus(st); })
-      .catch((err) => console.warn('[dashboard] daily limit error:', err));
 
     void fetchUserTestStats(user.id)
       .then((res) => {
@@ -99,14 +92,14 @@ export function Dashboard() {
           avgPct={avgPct ?? undefined}
         />
 
-        {/* Status Had Ujian Harian SPM (UBBM & UBBI) — Reset Tengah Malam Malaysia */}
+        {/* Mulakan Ujian Lisan SPM (UBBM & UBBI) — Latihan Tanpa Had */}
         <div className="rounded-[22px] border border-slate-200/80 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-black uppercase tracking-wider text-purple-600 dark:text-purple-400">
-              {isEnglish ? 'DAILY SPM ALLOWANCE' : 'KUOTA UJIAN HARIAN SPM'}
+              {isEnglish ? 'SPM ORAL PRACTICE' : 'LATIHAN UJIAN LISAN SPM'}
             </span>
-            <span className="text-[10px] font-bold text-slate-400">
-              Reset 12:00 AM MYT
+            <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-black text-emerald-600 dark:text-emerald-400">
+              {isEnglish ? 'Unlimited' : 'Tanpa Had'}
             </span>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2.5">
@@ -120,18 +113,10 @@ export function Dashboard() {
                   UBBM (Bahasa Melayu)
                 </div>
                 <div className="mt-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                  {dailyStatus?.bmDone ? 'Selesai hari ini' : '1 ujian tersedia'}
+                  {isEnglish ? 'Start practice' : 'Mula latihan'}
                 </div>
               </div>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                  dailyStatus?.bmDone
-                    ? 'bg-slate-200 text-slate-600 dark:bg-white/10 dark:text-slate-400'
-                    : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                }`}
-              >
-                {dailyStatus?.bmDone ? '0/1' : '1/1'}
-              </span>
+              <ChevronRightIcon size={16} color="#94A3B8" />
             </button>
 
             <button
@@ -144,18 +129,10 @@ export function Dashboard() {
                   UBBI (English)
                 </div>
                 <div className="mt-0.5 text-[10px] font-bold text-slate-500 dark:text-slate-400">
-                  {dailyStatus?.biDone ? 'Selesai hari ini' : '1 ujian tersedia'}
+                  {isEnglish ? 'Start practice' : 'Mula latihan'}
                 </div>
               </div>
-              <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                  dailyStatus?.biDone
-                    ? 'bg-slate-200 text-slate-600 dark:bg-white/10 dark:text-slate-400'
-                    : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                }`}
-              >
-                {dailyStatus?.biDone ? '0/1' : '1/1'}
-              </span>
+              <ChevronRightIcon size={16} color="#94A3B8" />
             </button>
           </div>
         </div>

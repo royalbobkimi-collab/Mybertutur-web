@@ -18,7 +18,7 @@ const LEGAL_COPY: Record<LegalKind, { title: string; body: string[] }> = {
     body: [
       'MyBertutur ialah alat latihan pendidikan; markah AI adalah panduan pembelajaran, bukan markah peperiksaan rasmi.',
       'Jangan kongsi kata laluan anda. Anda bertanggungjawab ke atas kandungan yang anda muat naik.',
-      'MyBertutur adalah percuma sepenuhnya. Walaupun percuma, penggunaan ciri AI tertakluk pada had penggunaan harian yang munasabah supaya perkhidmatan kekal tersedia untuk semua pengguna.',
+      'MyBertutur adalah percuma sepenuhnya untuk semua pelajar membuat latihan ujian lisan tanpa had.',
     ],
   },
 };

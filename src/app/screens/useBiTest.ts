@@ -8,7 +8,6 @@ import {
   saveMistakes,
   saveTestResult,
   claimDailyTestCompletion,
-  fetchDailyTestStatus,
   type MistakeBankRow,
 } from '../lib/data';
 import { startWebRecording, stopWebRecording } from '../lib/audio';
@@ -44,47 +43,6 @@ export function useBiTest() {
 
   const start = useCallback(async () => {
     if (isAnalyzing || isRecording) return;
-
-    // Sekat permulaan jika had harian telah dicapai (1 UBBI sehari waktu Malaysia)
-    if (user) {
-      try {
-        const status = await fetchDailyTestStatus(user.id);
-        if (status.biDone) {
-          setInfo({
-            icon: 'warning',
-            title: 'Limit Test Reached',
-            message: 'Limit test for today, come back tomorrow',
-            primaryText: 'Dashboard',
-            onPrimary: () => {
-              setInfo(null);
-              if (typeof window !== 'undefined') window.location.href = '/app';
-            },
-            secondaryText: 'Close',
-            onSecondary: () => setInfo(null),
-          });
-          return;
-        }
-      } catch (e) {
-        console.warn('[testbi] daily limit pre-check error:', e);
-        // Fail-closed: prevent starting if limit check cannot be verified
-        setInfo({
-          icon: 'warning',
-          title: 'Limit Check Failed',
-          message: 'Unable to verify your daily test allowance at this moment. Please check your connection and try again.',
-          primaryText: 'Try Again',
-          onPrimary: () => {
-            setInfo(null);
-            void start();
-          },
-          secondaryText: 'Dashboard',
-          onSecondary: () => {
-            setInfo(null);
-            if (typeof window !== 'undefined') window.location.href = '/app';
-          },
-        });
-        return;
-      }
-    }
 
     try {
       await startWebRecording();
