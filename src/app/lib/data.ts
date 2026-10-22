@@ -259,14 +259,74 @@ export async function saveTestResult(result: SaveTestResult): Promise<void> {
 }
 
 export async function getTestResults(userId: string): Promise<TestResult[]> {
-  const { data, error } = await supabase
-    .from('test_results')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(100);
-  if (error) throw new Error(`Could not load test result history: ${error.message}`);
-  return ((data ?? []) as TestResult[]).filter((r) => isTestResult(r, userId));
+  try {
+    const { data, error } = await supabase
+      .from('test_results')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (!error && Array.isArray(data) && data.length > 0) {
+      return data.filter((r) => isTestResult(r, userId));
+    }
+  } catch {
+    /* fallback to submissions */
+  }
+
+  // Sandaran telus: muat daripada jadual submissions jika test_results kosong
+  try {
+    const subs = await fetchSubmissions(userId);
+    return subs.map((s) => ({
+      id: String(s.id),
+      user_id: userId,
+      subject: (s.latihan_id === 1 ? 'bm' : 'bi') as 'bm' | 'bi',
+      topic_title: s.latihan_id === 1 ? 'Ujian Lisan BM (UBBM)' : 'Ujian Lisan BI (UBBI)',
+      section_type: 'full_test',
+      overall_score: typeof s.score === 'number' ? s.score : 0,
+      breakdown_scores: {},
+      feedback: s.feedback || '',
+      transcription: s.transcription || '',
+      created_at: s.created_at || new Date().toISOString(),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Statistik pantas pengguna diselaraskan terus daripada submissions & test_results
+ * (jumlah ujian selesai & purata skor sebenar) supaya angka Home = Progress.
+ */
+export async function fetchUserTestStats(
+  userId: string,
+): Promise<{ count: number; avg: number | null }> {
+  try {
+    const [subsRes, testResultsRes] = await Promise.all([
+      supabase.from('submissions').select('score').eq('user_id', userId),
+      supabase.from('test_results').select('overall_score').eq('user_id', userId),
+    ]);
+
+    const subs = Array.isArray(subsRes.data) ? subsRes.data : [];
+    const testResults = Array.isArray(testResultsRes.data) ? testResultsRes.data : [];
+
+    const totalCount = subs.length || testResults.length;
+    const validScores = subs.length
+      ? subs
+          .map((r) => r.score)
+          .filter((s): s is number => typeof s === 'number' && !Number.isNaN(s) && s > 0)
+      : testResults
+          .map((r) => r.overall_score)
+          .filter((s): s is number => typeof s === 'number' && !Number.isNaN(s) && s > 0);
+
+    const avg = validScores.length
+      ? Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length)
+      : null;
+
+    return { count: totalCount, avg };
+  } catch (err) {
+    console.warn('[fetchUserTestStats] error:', err);
+  }
+  return { count: 0, avg: null };
 }
 
 /* --- Profiles (table `profiles`) --- */
@@ -437,26 +497,22 @@ export function getMalaysiaDateString(): string {
  */
 export async function fetchDailyTestStatus(userId: string): Promise<DailyTestStatus> {
   const klDate = getMalaysiaDateString();
+  let bmDone = false;
+  let biDone = false;
 
   // 1) Cuba RPC server-side jika migrasi 20261020 telah dijalankan di Supabase
   try {
     const { data: rpcData, error: rpcErr } = await supabase.rpc('my_daily_test_status');
     if (!rpcErr && Array.isArray(rpcData) && rpcData.length > 0) {
       const row = rpcData[0] as { kl_date?: string; bm_done?: boolean; bi_done?: boolean };
-      return {
-        klDate: String(row.kl_date || klDate),
-        bmDone: Boolean(row.bm_done),
-        biDone: Boolean(row.bi_done),
-      };
+      if (row.bm_done) bmDone = true;
+      if (row.bi_done) biDone = true;
     }
   } catch {
-    /* fallback to direct query */
+    /* fallback to table checks */
   }
 
-  // 2) Semakan sandaran terus ke jadual daily_test_completions atau submissions
-  let bmDone = false;
-  let biDone = false;
-
+  // 2) Semakan jadual daily_test_completions
   try {
     const { data: completions, error: cErr } = await supabase
       .from('daily_test_completions')
@@ -469,41 +525,37 @@ export async function fetchDailyTestStatus(userId: string): Promise<DailyTestSta
         if (row.subject === 'bm') bmDone = true;
         if (row.subject === 'bi') biDone = true;
       }
-      return { klDate, bmDone, biDone };
     }
   } catch {
     /* fallback to submissions check */
   }
 
-  // 3) Fallback berasaskan submissions untuk hari ini (waktu Malaysia UTC+8)
-  try {
-    // Pengiraan julat permulaan dan penamat hari Malaysia dalam UTC
-    const [year, month, day] = klDate.split('-').map(Number);
-    const startOfKlDayUtc = new Date(Date.UTC(year, month - 1, day, 0 - 8, 0, 0)).toISOString();
-    const endOfKlDayUtc = new Date(Date.UTC(year, month - 1, day, 23 - 8, 59, 59, 999)).toISOString();
+  // 3) Semakan telus jadual submissions untuk hari ini (waktu Malaysia UTC+8)
+  // Memastikan had sentiasa berkuatkuasa walaupun RPC/daily_test_completions belum dikemas kini
+  if (!bmDone || !biDone) {
+    try {
+      const [year, month, day] = klDate.split('-').map(Number);
+      const startOfKlDayUtc = new Date(Date.UTC(year, month - 1, day, 0 - 8, 0, 0)).toISOString();
+      const endOfKlDayUtc = new Date(Date.UTC(year, month - 1, day, 23 - 8, 59, 59, 999)).toISOString();
 
-    const { data: subs, error: subsErr } = await supabase
-      .from('submissions')
-      .select('latihan_id, score, created_at')
-      .eq('user_id', userId)
-      .gte('created_at', startOfKlDayUtc)
-      .lte('created_at', endOfKlDayUtc);
+      const { data: subs, error: subsErr } = await supabase
+        .from('submissions')
+        .select('latihan_id, score, created_at')
+        .eq('user_id', userId)
+        .gte('created_at', startOfKlDayUtc)
+        .lte('created_at', endOfKlDayUtc);
 
-    if (!subsErr && Array.isArray(subs)) {
-      for (const s of subs) {
-        if (s.score != null && s.score > 0) {
-          if (s.latihan_id === 1) bmDone = true;
-          if (s.latihan_id === 2) biDone = true;
+      if (!subsErr && Array.isArray(subs)) {
+        for (const s of subs) {
+          if (s.score != null && s.score > 0) {
+            if (s.latihan_id === 1) bmDone = true;
+            if (s.latihan_id === 2) biDone = true;
+          }
         }
       }
-      return { klDate, bmDone, biDone };
+    } catch (err) {
+      console.warn('[daily-limit] Submissions check error:', err);
     }
-    if (subsErr) {
-      throw new Error(subsErr.message);
-    }
-  } catch (err) {
-    console.warn('[daily-limit] Fallback check failed:', err);
-    throw err;
   }
 
   return { klDate, bmDone, biDone };
@@ -515,12 +567,18 @@ export async function fetchDailyTestStatus(userId: string): Promise<DailyTestSta
  */
 export async function claimDailyTestCompletion(
   subject: 'bm' | 'bi',
-  submissionId?: number | null,
+  submissionId?: number | string | null,
 ): Promise<{ success: boolean; alreadyDone: boolean }> {
   try {
+    // Hantar submissionId null jika bukan integer untuk elak ralat sintaks bigint di Postgres
+    const safeSubmissionId =
+      typeof submissionId === 'number' && Number.isInteger(submissionId)
+        ? submissionId
+        : null;
+
     const { data, error } = await supabase.rpc('claim_daily_test', {
       p_subject: subject,
-      p_submission_id: submissionId ?? null,
+      p_submission_id: safeSubmissionId,
     });
     if (!error && typeof data === 'boolean') {
       return { success: data, alreadyDone: !data };
@@ -535,12 +593,15 @@ export async function claimDailyTestCompletion(
     const user = userData?.user;
     if (user) {
       const klDate = getMalaysiaDateString();
-      const { error: insErr } = await supabase.from('daily_test_completions').insert({
+      const payload: { user_id: string; subject: string; kl_date: string; submission_id?: number | null } = {
         user_id: user.id,
         subject,
         kl_date: klDate,
-        submission_id: submissionId ?? null,
-      });
+      };
+      if (typeof submissionId === 'number' && Number.isInteger(submissionId)) {
+        payload.submission_id = submissionId;
+      }
+      const { error: insErr } = await supabase.from('daily_test_completions').insert(payload);
       if (!insErr) {
         return { success: true, alreadyDone: false };
       }

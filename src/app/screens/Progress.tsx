@@ -30,10 +30,14 @@ export function Progress() {
         getTestResults(user.id).catch(() => []),
       ]);
       setRows(subs);
-      const avg = results.length
-        ? Math.round(results.reduce((a, r) => a + r.overall_score, 0) / results.length)
+      const totalCount = subs.length || results.length;
+      const validScores = subs.length
+        ? subs.map((s) => s.score).filter((n): n is number => typeof n === 'number' && !Number.isNaN(n) && n > 0)
+        : results.map((r) => r.overall_score).filter((n) => n > 0);
+      const avg = validScores.length
+        ? Math.round(validScores.reduce((a, b) => a + b, 0) / validScores.length)
         : null;
-      setTestStats({ count: results.length, avg });
+      setTestStats({ count: totalCount, avg });
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {

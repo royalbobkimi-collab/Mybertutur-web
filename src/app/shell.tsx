@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowBackIcon } from './components/Icons';
 import { Drawer } from './components/Drawer';
 import { BottomNav } from './components/BottomNav';
+import { AdBanner } from '../components/AdBanner';
+
 
 export function LogoHeader({ size = 'small', label = 'MyBertutur' }: { size?: 'small' | 'medium'; label?: string }) {
   const logoSize = size === 'small' ? 30 : 36;
@@ -32,6 +34,7 @@ export function AppShell({
   onBack,
   children,
   hideNav = false,
+  hideAds = false,
 }: {
   title?: string;
   subtitle?: string;
@@ -39,6 +42,7 @@ export function AppShell({
   onBack?: string;
   children: ReactNode;
   hideNav?: boolean;
+  hideAds?: boolean;
 }) {
   const { navigate, path } = useRouter();
   const { user } = useAuth();
@@ -58,6 +62,8 @@ export function AppShell({
       path === '/app/academy' ||
       path === '/app/leaderboard' ||
       path === '/app/settings');
+  const isTestScreen = path === '/app/testbm' || path === '/app/testbi';
+  const shouldShowAds = !hideAds && !isTestScreen;
 
   return (
     <div
@@ -124,8 +130,19 @@ export function AppShell({
         </header>
 
         {/* Content Area */}
-        <main className={`flex-1 px-4 ${hideNav ? 'pb-8' : 'pb-[92px]'} pt-3`}>
+        <main
+          className={`flex-1 px-4 ${
+            hideNav ? 'pb-8' : 'pb-[calc(6rem+env(safe-area-inset-bottom,0px)+16px)]'
+          } pt-3`}
+        >
           {children}
+
+          {/* Banner placement: only shown on non-test screens */}
+          {shouldShowAds && (
+            <div className="mt-6 mb-2">
+              <AdBanner placement="shell-bottom" />
+            </div>
+          )}
         </main>
 
         {/* Floating Bottom Nav */}

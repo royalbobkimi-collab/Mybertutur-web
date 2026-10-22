@@ -25,3 +25,45 @@ export type BmOralTheme = {
   individual: BmOralExercise[];
   group: BmOralExercise[];
 };
+
+/**
+ * Skema data Bank Soalan SPM (spm_soalan_bank.json).
+ */
+export type SpMSoalan = {
+  n: number;
+  text: string;
+  jenis?: 'bahan' | 'kbat' | string;
+};
+
+export type SpmSoalan = SpMSoalan;
+
+export type SpMQuestionItem = {
+  n: number;
+  jenis: 'bahan' | 'kbat' | string;
+  teks: string;
+};
+
+export type SpMSet = {
+  id: string;
+  tema: string;
+  individu: {
+    tajuk: string;
+    bahan: string;
+    soalan: SpMQuestionItem[];
+  };
+  kumpulan: {
+    tajuk: string;
+    bahan: string;
+    soalanPerbincangan: string;
+  };
+};
+
+export type SpmSet = SpMSet;
+
+export type SpMBank = {
+  meta?: Record<string, unknown>;
+  bm: SpMSet[];
+};
+
+export type SpmBank = SpMBank;
+

@@ -5,6 +5,7 @@ import { evaluateAudioRecording, TruncatedGeminiResponseError } from '../lib/gem
 import {
   handleSubmitToSupabase,
   saveMistakes,
+  saveTestResult,
   claimDailyTestCompletion,
   fetchDailyTestStatus,
   type MistakeBankRow,
@@ -15,10 +16,53 @@ import type { InfoDialogConfig } from '../dialogs';
 import { BM_LATIHAN_ID, MIN_RECORD_SECONDS, SECTIONS } from './testbmData';
 import { aggregateBmResults } from './testbmData';
 import type { AIResult, PartResult, SectionKey } from './testbmData';
+import type { SpMBank, SpMSet, SpMSoalan } from '../types/bmOral';
+import spmBankRaw from '../data/spm_soalan_bank.json';
+
+const BANK_SETS: SpMSet[] = ((spmBankRaw as unknown as SpMBank).bm || []) as SpMSet[];
+
+function parseQuestionsFromSet(set: SpMSet | undefined): {
+  individual: SpMSoalan[];
+  group: SpMSoalan[];
+} {
+  if (!set) return { individual: [], group: [] };
+  const individual: SpMSoalan[] = (set.individu?.soalan || []).map((q) => ({
+    n: q.n,
+    text: q.teks,
+    jenis: q.jenis,
+  }));
+  const group: SpMSoalan[] = set.kumpulan?.soalanPerbincangan
+    ? [{ n: 1, text: set.kumpulan.soalanPerbincangan, jenis: 'perbincangan' }]
+    : [];
+  return { individual, group };
+}
+
+function pickRandomSet(excludeId?: string): SpMSet {
+  if (BANK_SETS.length === 0) {
+    return {
+      id: 'bm-fallback',
+      tema: 'Umum',
+      individu: { tajuk: 'Umum', bahan: '', soalan: [] },
+      kumpulan: { tajuk: 'Umum', bahan: '', soalanPerbincangan: '' },
+    };
+  }
+  const pool = BANK_SETS.filter((s) => s.id !== excludeId);
+  const candidates = pool.length > 0 ? pool : BANK_SETS;
+  return candidates[Math.floor(Math.random() * candidates.length)] ?? BANK_SETS[0];
+}
 
 export function useBmTest() {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState<SectionKey>(SECTIONS[0]);
+  const [activeBankSet, setActiveBankSet] = useState<SpMSet>(() => pickRandomSet());
+  const [individualQuestions, setIndividualQuestions] = useState<SpMSoalan[]>(() => {
+    const initial = pickRandomSet();
+    return parseQuestionsFromSet(initial).individual;
+  });
+  const [groupQuestions, setGroupQuestions] = useState<SpMSoalan[]>(() => {
+    const initial = pickRandomSet();
+    return parseQuestionsFromSet(initial).group;
+  });
   const [isRecording, setIsRecording] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -30,8 +74,18 @@ export function useBmTest() {
   const mistakesRef = useRef<MistakeBankRow[]>([]);
   const submittedRef = useRef(false);
   const timerRef = useRef<number | null>(null);
-  void BM_LATIHAN_ID;
-  void MIN_RECORD_SECONDS;
+  const spmDataRef = useRef<{ sets: SpMSet[]; soalan: SpMSoalan[] } | null>(null);
+
+  // Sync questions whenever activeBankSet changes
+  useEffect(() => {
+    const parsed = parseQuestionsFromSet(activeBankSet);
+    setIndividualQuestions(parsed.individual);
+    setGroupQuestions(parsed.group);
+    spmDataRef.current = {
+      sets: BANK_SETS,
+      soalan: parsed.individual,
+    };
+  }, [activeBankSet]);
 
 
   useEffect(() => {
@@ -58,6 +112,7 @@ export function useBmTest() {
     setIsAnalyzing(false);
     setTimer(0);
     setActiveSection(SECTIONS[0]);
+    setActiveBankSet((prev) => pickRandomSet(prev?.id));
   }, []);
 
   const start = useCallback(async () => {
@@ -156,14 +211,14 @@ export function useBmTest() {
     }
   }, [isAnalyzing, isRecording]);
 
-  const stop = useCallback(async (questionForAI: string) => {
+  const stop = useCallback(async (questionForAI?: string) => {
     if (isAnalyzing || !isRecording) return;
     setIsRecording(false);
     if (submittedRef.current) { cancelWebRecording(); return; }
     setIsAnalyzing(true);
     try {
       const rec = await stopWebRecording();
-      if (rec.durationSeconds < 3 || rec.blob.size < 1000) {
+      if (rec.durationSeconds < MIN_RECORD_SECONDS || rec.blob.size < 1000) {
         setInfo({
           icon: 'warning',
           title: 'Tiada Suara Dikesan',
@@ -179,9 +234,22 @@ export function useBmTest() {
         return;
       }
       const base64 = await webBlobToBase64(rec.blob);
+
+      // Pastikan ada prompt Gemini yang lengkap dan sah
+      let prompt = (questionForAI && questionForAI !== '__auto__') ? questionForAI : '';
+      if (!prompt.trim()) {
+        if (activeSection === 'Bahagian A (Membaca)') {
+          const qs = (activeBankSet.individu?.soalan || []).map((q) => `${q.n}. ${q.teks}`).join('\n');
+          prompt = `Tema: ${activeBankSet.tema}\nPetikan Rangsangan untuk dibaca (Taksiran Individu):\n"${activeBankSet.individu?.bahan || ''}"\n(Bank Soalan SPM)\n\nArahan/Soalan:\n${qs}\n\nArahan Penilaian: Pelajar menjawab soalan Ujian Lisan Bahasa Melayu SPM dalam rakaman ini berpandukan bahan rangsangan di atas. Sila nilaikan intonasi, sebutan, kelancaran, dan tatabahasa secara menyeluruh.`;
+        } else {
+          const qGroup = activeBankSet.kumpulan?.soalanPerbincangan || 'Bincangkan isu ini bersama ahli kumpulan anda dan berikan cadangan serta hujah yang bernas secara lisan.';
+          prompt = `Tema: ${activeBankSet.tema}\nBahan Rangsangan (Taksiran Kumpulan):\n"${activeBankSet.kumpulan?.bahan || ''}"\n(Bank Soalan SPM)\n\nArahan/Soalan:\n${qGroup}\n\nArahan Penilaian: Pelajar menjawab soalan Ujian Lisan Bahasa Melayu SPM dalam rakaman ini berpandukan bahan rangsangan di atas. Sila nilaikan intonasi, sebutan, kelancaran, dan tatabahasa secara menyeluruh.`;
+        }
+      }
+
       const gemini = await evaluateAudioRecording({
         audioBase64: base64, subject: 'bm',
-        sectionTitle: activeSection, questionPrompt: questionForAI,
+        sectionTitle: activeSection, questionPrompt: prompt,
         mimeType: rec.mimeType,
       });
       const dynamic: AIResult = {
@@ -192,10 +260,10 @@ export function useBmTest() {
         transcription: gemini.transcription, feedback: gemini.feedback,
         mistakes: gemini.mistakes,
       };
-      if (user && gemini.mistakes.length > 0) {
+      if (user && gemini.mistakes && gemini.mistakes.length > 0) {
         const captured: MistakeBankRow[] = gemini.mistakes.map((m) => ({
           user_id: user.id, subject_id: 'bm',
-          original_question: m.original_question || questionForAI,
+          original_question: m.original_question || prompt,
           user_answer: m.user_answer, correct_answer: m.correct_answer,
           category: m.category, ai_explanation: m.ai_explanation,
         }));
@@ -218,11 +286,28 @@ export function useBmTest() {
         let subRes: { id: number } | null = null;
         try {
           subRes = await handleSubmitToSupabase({
-            user_id: user.id, latihan_id: 1,
+            user_id: user.id, latihan_id: BM_LATIHAN_ID,
             score: final.overallScore, feedback: final.feedback,
             transcription: final.transcription ?? null,
           });
         } catch (e) { console.warn('[testbm] submit gagal:', e); }
+
+        try {
+          await saveTestResult({
+            user_id: user.id,
+            subject: 'bm',
+            topic_title: 'Ujian Lisan BM (UBBM)',
+            section_type: 'full_test',
+            overall_score: final.overallScore,
+            breakdown_scores: {
+              sebutan: final.sebutan,
+              kelancaran: final.kelancaran,
+              tatabahasa: final.tatabahasa,
+            },
+            feedback: final.feedback,
+            transcription: final.transcription ?? '',
+          });
+        } catch (e) { console.warn('[testbm] saveTestResult error:', e); }
 
         // Tuntut kuota harian secara atomik di database
         try {
@@ -284,11 +369,32 @@ export function useBmTest() {
     } finally {
       setIsAnalyzing(false);
     }
-  }, [isAnalyzing, isRecording, activeSection, user, reset]);
+  }, [isAnalyzing, isRecording, activeSection, user, reset, activeBankSet]);
+
+  const selectBankSet = useCallback((id: string) => {
+    const found = BANK_SETS.find((s) => s.id === id);
+    if (found) setActiveBankSet(found);
+  }, []);
 
   return {
-    activeSection, setActiveSection, isRecording, isAnalyzing,
-    showResult, setShowResult, timer, info, setInfo,
-    finalResult, transcripts, start, stop, reset,
+    activeSection,
+    setActiveSection,
+    isRecording,
+    isAnalyzing,
+    showResult,
+    setShowResult,
+    timer,
+    info,
+    setInfo,
+    finalResult,
+    transcripts,
+    start,
+    stop,
+    reset,
+    individualQuestions,
+    groupQuestions,
+    activeBankSet,
+    selectBankSet,
+    bankSets: BANK_SETS,
   };
 }

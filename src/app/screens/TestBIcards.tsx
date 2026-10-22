@@ -165,8 +165,13 @@ export function Part3Card({ set }: { set: BiSet }) {
 export function Part3DecisionCard({ set }: { set: BiSet }) {
   return (
     <div className="space-y-3 pt-1">
-      <div className="text-[11px] font-black uppercase tracking-wider text-rose-500">
-        SPM PART 3 · DECISION
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-black uppercase tracking-wider text-rose-500">
+          SPM PART 3 · DECISION (KBAT / HOTS)
+        </span>
+        <span className="rounded-full bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-extrabold text-rose-600 dark:bg-rose-950/40 dark:text-rose-400">
+          ⚡ Spontan (Tiada masa persediaan)
+        </span>
       </div>
 
       <div className="rounded-[22px] border border-rose-500/20 bg-rose-500/5 p-4 dark:bg-rose-950/20">
@@ -175,7 +180,7 @@ export function Part3DecisionCard({ set }: { set: BiSet }) {
           {set.part3.hots}
         </h2>
         <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-          State your viewpoint clearly and provide critical justifications with real-world examples (1 minute).
+          State your viewpoint clearly and provide critical justifications with real-world examples (1 minute limit). In SPM, candidates respond spontaneously without preparation time.
         </p>
       </div>
 

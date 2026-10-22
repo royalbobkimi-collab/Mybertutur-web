@@ -6,6 +6,7 @@ import { TruncatedGeminiResponseError } from '../lib/gemini';
 import {
   handleSubmitToSupabase,
   saveMistakes,
+  saveTestResult,
   claimDailyTestCompletion,
   fetchDailyTestStatus,
   type MistakeBankRow,
@@ -207,6 +208,23 @@ export function useBiTest() {
             transcription: final.transcription ?? null,
           });
         } catch (e) { console.warn('[testbi] submit gagal:', e); }
+
+        try {
+          await saveTestResult({
+            user_id: user.id,
+            subject: 'bi',
+            topic_title: 'SPM English Speaking (UBBI)',
+            section_type: 'full_test',
+            overall_score: final.overallScore,
+            breakdown_scores: {
+              fluency: final.fluency,
+              grammar: final.grammar,
+              vocabulary: final.vocab,
+            },
+            feedback: final.feedback,
+            transcription: final.transcription ?? '',
+          });
+        } catch (e) { console.warn('[testbi] saveTestResult error:', e); }
 
         // Tuntut kuota harian secara atomik di database
         try {

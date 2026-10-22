@@ -105,7 +105,7 @@ export function Library() {
             <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">{e.meaning}</p>
             {e.example && (
               <p className="mt-2 rounded-[12px] bg-slate-50 p-2 text-xs italic text-slate-500 dark:bg-white/5 dark:text-slate-400">
-                &ldquo;{e.example}&rdquo;
+                “{e.example}”
               </p>
             )}
           </div>

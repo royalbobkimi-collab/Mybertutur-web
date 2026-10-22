@@ -6,7 +6,8 @@
   "description": "MyBertutur — Landing page & web app for AI-powered SPM Oral Exam practice (BM & BI).",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "validate": "node scripts/validate-question-bank.mjs",
+    "build": "node scripts/validate-question-bank.mjs && tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint ."
   },

@@ -6,9 +6,11 @@ const LEGAL_COPY: Record<LegalKind, { title: string; body: string[] }> = {
   privacy: {
     title: 'Dasar Privasi',
     body: [
-      'MyBertutur menyimpan data akaun anda (email dan nama) dan rekod latihan anda di Supabase supaya kemajuan anda kekal merentas peranti.',
-      'Rakaman audio hanya digunakan untuk menjana penilaian AI anda dan tidak dikongsi dengan pihak ketiga.',
-      'Anda boleh meminta pemadaman data dengan menghubungi support@mybertutur.com.',
+      'MyBertutur menyimpan data akaun anda (emel dan nama) dan rekod latihan anda di Supabase supaya kemajuan anda kekal merentas peranti.',
+      'Rakaman audio hanya diproses oleh model AI bagi tujuan menjana penilaian lisan anda serta maklum balas tatabahasa dan kelancaran.',
+      'Pengiklanan & Kuki Pihak Ketiga: Laman web kami menggunakan perkhidmatan pengiklanan Google AdSense untuk memaparkan iklan. Google dan rakan kongsi mereka menggunakan kuki atau pengecam unik untuk menyajikan iklan yang relevan berdasarkan lawatan terdahulu anda ke laman web ini atau tapak lain di Internet.',
+      'Pengguna boleh memilih keluar daripada pengiklanan diperibadikan melalui Tetapan Iklan Google (https://adssettings.google.com).',
+      'Anda boleh meminta pemadaman data akaun anda pada bila-bila masa dengan menghubungi kami di support@mybertutur.com.',
     ],
   },
   terms: {

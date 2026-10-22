@@ -68,5 +68,6 @@ export function useRouter(): RouterContextValue {
 /** True when `path` equals `route` or is a child of it ("/app" ⊃ "/app/settings"). */
 export function isRouteActive(path: string, route: string): boolean {
   if (route === '/') return path === '/';
+  if (route === '/app') return path === '/app' || path === '/app/';
   return path === route || path.startsWith(`${route}/`);
 }

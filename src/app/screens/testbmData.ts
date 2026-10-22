@@ -68,14 +68,46 @@ export const SECTION_QUESTIONS: Record<SectionKey, SampleQuestion[]> = {
 import type { GeminiMistake } from '../lib/gemini';
 import { BM_TEXTBOOK_TOPICS, type BmTextbookTopic } from '../data/bmTextbookTopics';
 import { BM_ORAL_THEMES } from '../data/naskahCalon';
-import type { BmOralTheme, BmOralExercise } from '../types/bmOral';
+import type {
+  BmOralTheme,
+  BmOralExercise,
+  SpMSoalan,
+  SpMSet,
+  SpMBank,
+  SpmSoalan,
+  SpmSet,
+  SpmBank,
+} from '../types/bmOral';
 
-export { BM_TEXTBOOK_TOPICS, type BmTextbookTopic, BM_ORAL_THEMES, type BmOralTheme, type BmOralExercise };
+export {
+  BM_TEXTBOOK_TOPICS,
+  type BmTextbookTopic,
+  BM_ORAL_THEMES,
+  type BmOralTheme,
+  type BmOralExercise,
+  type SpMSoalan,
+  type SpMSet,
+  type SpMBank,
+  type SpmSoalan,
+  type SpmSet,
+  type SpmBank,
+};
 
 export const STORAGE_KEY_BM_RECENT = 'mybertutur.bm_recent_themes';
 
+/** Semak jika tema mengandungi pautan URL mentah luar */
+export function hasExternalUrlSource(theme: BmOralTheme): boolean {
+  return [...theme.individual, ...theme.group].some((e) =>
+    /https?:\/\//i.test((e.sourceReference || '') + ' ' + (e.sourceTitle || '')),
+  );
+}
+
+/** Senarai tema bersih daripada sumber URL mentah luar untuk pemilihan lalai */
+export const BM_CLEAN_ORAL_THEMES = BM_ORAL_THEMES.filter((t) => !hasExternalUrlSource(t));
+
 /**
  * Pilih tema BM secara rawak dan elak mengulang 5 tema terakhir.
+ * Set dengan sumber URL laman web luar ditapis daripada pemilihan lalai.
  * Disimpan dalam localStorage dengan try/catch selamat.
  */
 export function pickRandomBmTheme(currentId?: string): BmOralTheme {
@@ -88,11 +120,14 @@ export function pickRandomBmTheme(currentId?: string): BmOralTheme {
     recentIds = [];
   }
 
-  const available = BM_ORAL_THEMES.filter(
+  // Gunakan kumpulan tema bersih (tanpa URL mentah) secara lalai
+  const basePool = BM_CLEAN_ORAL_THEMES.length > 0 ? BM_CLEAN_ORAL_THEMES : BM_ORAL_THEMES;
+
+  const available = basePool.filter(
     (t) => !recentIds.slice(-5).includes(t.id) && t.id !== currentId,
   );
-  const pool = available.length > 0 ? available : BM_ORAL_THEMES;
-  const picked = pool[Math.floor(Math.random() * pool.length)] || BM_ORAL_THEMES[0];
+  const pool = available.length > 0 ? available : basePool;
+  const picked = pool[Math.floor(Math.random() * pool.length)] || basePool[0];
 
   try {
     if (typeof window !== 'undefined') {

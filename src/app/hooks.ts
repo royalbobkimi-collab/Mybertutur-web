@@ -80,7 +80,7 @@ export function useTestProgress(): TestProgressState {
       const completedCount = (doneBm ? 1 : 0) + (doneBi ? 1 : 0);
       const scores = rows
         .map((r) => r.score)
-        .filter((n): n is number => typeof n === 'number' && !Number.isNaN(n));
+        .filter((n): n is number => typeof n === 'number' && !Number.isNaN(n) && n > 0);
       const averageScore = scores.length
         ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
         : null;

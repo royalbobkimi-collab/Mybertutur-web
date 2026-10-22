@@ -20,7 +20,10 @@ export function BottomNav({ activeRoute }: { activeRoute: string }) {
     >
       <div className="grid grid-cols-4 items-center">
         {navItems.map((item) => {
-          const active = isRouteActive(path, item.route) || activeRoute === item.route;
+          // If activeRoute is explicitly supplied (e.g. from AppShell on subpages), rely strictly on activeRoute
+          const active = activeRoute
+            ? activeRoute === item.route
+            : isRouteActive(path, item.route);
           const IconComponent = item.icon;
           return (
             <button

@@ -4,7 +4,12 @@ import { useRouter } from '../router';
 import { useLanguage } from '../i18n';
 import { useAuth } from '../../context/AuthContext';
 import { useTestProgress } from '../hooks';
-import { getTestResults, fetchUnmasteredMistakes, fetchDailyTestStatus, type DailyTestStatus } from '../lib/data';
+import {
+  fetchUserTestStats,
+  fetchUnmasteredMistakes,
+  fetchDailyTestStatus,
+  type DailyTestStatus,
+} from '../lib/data';
 import { ChevronRightIcon, BookOpenIcon, CloseIcon } from '../components/Icons';
 import { LearningFocusCard } from '../components/LearningFocusCard';
 import { WeeklyChartCard } from '../components/WeeklyChartCard';
@@ -44,11 +49,10 @@ export function Dashboard() {
       .then((st) => { if (active) setDailyStatus(st); })
       .catch((err) => console.warn('[dashboard] daily limit error:', err));
 
-    void getTestResults(user.id)
-      .then((rows) => {
+    void fetchUserTestStats(user.id)
+      .then((res) => {
         if (!active) return;
-        const avg = rows.length ? Math.round(rows.reduce((a, r) => a + r.overall_score, 0) / rows.length) : null;
-        setStats({ loading: false, count: rows.length, avg });
+        setStats({ loading: false, count: res.count, avg: res.avg });
       })
       .catch(() => { if (active) setStats({ loading: false, count: 0, avg: null }); });
 

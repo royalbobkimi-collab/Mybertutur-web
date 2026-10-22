@@ -1,17 +1,21 @@
-﻿/** Ujian Lisan BI â€” skrin utama (tabs + rakaman + hasil). */
+/** Ujian Lisan BI — skrin utama (tabs + rakaman + hasil). */
 import { useState, useEffect, useRef } from 'react';
 import { AppShell } from '../shell';
 import { InfoDialog, MetricBar } from '../dialogs';
 import { useRouter } from '../router';
+import { useAuth } from '../../context/AuthContext';
 import { BI_SPEAKING_2025_SETS } from '../data/biSpeaking2025';
 import { useBiTest } from './useBiTest';
 import { BI_SECTIONS, BI_PREP_SECONDS, biSetLabel, pickRandomBiSetIndex } from './testbiData';
+import { fetchDailyTestStatus, type DailyTestStatus } from '../lib/data';
 import { scoreColor, scoreLabel } from './testbmData';
 import { Part1Card, Part2Card, Part3Card, Part3DecisionCard, biPromptFor, fmt } from './TestBIcards';
 
 export function TestBI() {
   const { navigate } = useRouter();
+  const { user } = useAuth();
   const t = useBiTest();
+  const [dailyStatus, setDailyStatus] = useState<DailyTestStatus | null>(null);
   const [setIndex, setSetIndex] = useState(() => pickRandomBiSetIndex(BI_SPEAKING_2025_SETS.length));
   const [candidate] = useState<'A' | 'B'>(() => (Math.random() < 0.5 ? 'A' : 'B'));
   const [prepTimeLeft, setPrepTimeLeft] = useState(BI_PREP_SECONDS);
@@ -22,6 +26,13 @@ export function TestBI() {
   const result = t.finalResult;
   const step = BI_SECTIONS.indexOf(t.activeSection) + 1;
   const stoppedRef = useRef(false);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchDailyTestStatus(user.id)
+      .then(setDailyStatus)
+      .catch((err) => console.warn('[testbi] limit check error:', err));
+  }, [user]);
 
   useEffect(() => {
     if (t.isRecording) stoppedRef.current = false;
@@ -89,11 +100,12 @@ export function TestBI() {
   return (
     <AppShell
       title="SPM English Speaking"
-      subtitle="Ujian Lisan Â· Latihan Interaktif"
+      subtitle="Ujian Lisan · Latihan Interaktif"
       activeRoute="/app/academy"
       onBack="/app/academy"
+      hideAds
     >
-      <div className="space-y-3.5 pb-6">
+      <div className="space-y-4 pb-6">
         {/* Stepper with percentage & 3 dots */}
         <div className="rounded-[20px] border border-slate-200/80 bg-white p-3.5 shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
           <div className="flex items-center justify-between text-xs font-black">
@@ -160,7 +172,7 @@ export function TestBI() {
                 onClick={handleNextSet}
                 className="rounded-full bg-purple-500/10 px-2.5 py-0.5 text-[10px] font-extrabold text-[#7C3AED] hover:bg-purple-500/20"
               >
-                Tukar Set â†»
+                Tukar Set →
               </button>
             )}
             <span
@@ -170,7 +182,7 @@ export function TestBI() {
                   : 'bg-amber-500/15 text-amber-600'
               }`}
             >
-              {t.isRecording ? `â± ${fmt(t.timeLeft)}` : `Limit ${fmt(t.limit)}`}
+              {t.isRecording ? '⏱ ' + fmt(t.timeLeft) : 'Limit ' + fmt(t.limit)}
             </span>
           </div>
 
@@ -205,6 +217,25 @@ export function TestBI() {
           </div>
         )}
 
+        {/* Daily Limit Reached Warning Banner */}
+        {dailyStatus?.biDone && (
+          <div className="rounded-[22px] border border-amber-500/30 bg-amber-500/10 p-4 text-center">
+            <div className="text-xs font-black text-amber-700 dark:text-amber-300">
+              ⚠️ Had Ujian Harian Dicapai (1/1 Selesai)
+            </div>
+            <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
+              Anda telah menyelesaikan 1 Ujian Lisan BI untuk hari ini. Kuota akan diperbaharui pada 12:00 AM waktu Malaysia (MYT). Sila kembali esok untuk latihan seterusnya.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/app')}
+              className="mt-3 rounded-full bg-[#7C3AED] px-4 py-1.5 text-xs font-black text-white shadow-sm"
+            >
+              Kembali ke Dashboard
+            </button>
+          </div>
+        )}
+
         {/* Recording Card & Buttons */}
         <div className="rounded-[24px] border border-slate-200/80 bg-white p-5 text-center shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
           {isPrepping ? (
@@ -216,7 +247,7 @@ export function TestBI() {
                 🎯
               </div>
               <p className="mt-2 text-xs font-bold text-amber-600 dark:text-amber-400">
-                Prepare your answerâ€¦
+                Prepare your answer…
               </p>
             </div>
           ) : !t.isRecording ? (
@@ -227,10 +258,26 @@ export function TestBI() {
               <button
                 type="button"
                 onClick={() => {
+                  if (dailyStatus?.biDone) {
+                    t.setInfo({
+                      icon: 'warning',
+                      title: 'Limit Test Reached',
+                      message: 'Limit test for today, come back tomorrow',
+                      primaryText: 'Dashboard',
+                      onPrimary: () => {
+                        t.setInfo(null);
+                        navigate('/app');
+                      },
+                      secondaryText: 'Close',
+                      onSecondary: () => t.setInfo(null),
+                    });
+                    return;
+                  }
+                  // HOTS / Part 3 · Decision is spontaneous in real SPM (no prep time given).
+                  // Candidates prepare only for Part 2 (Individual) and Part 3 (Mind map discussion).
                   const needsPrep =
                     t.activeSection === 'Part 2' ||
-                    t.activeSection === 'Part 3' ||
-                    t.activeSection === 'Part 3 · Decision';
+                    t.activeSection === 'Part 3';
                   if (needsPrep) {
                     setPrepTimeLeft(BI_PREP_SECONDS);
                     setIsPrepping(true);
@@ -249,13 +296,19 @@ export function TestBI() {
                     void t.start();
                   }
                 }}
-                disabled={t.isAnalyzing}
+                disabled={t.isAnalyzing || dailyStatus?.biDone}
                 className="mx-auto mt-3 flex h-16 w-16 items-center justify-center rounded-full bg-[#7C3AED] text-2xl text-white shadow-[0_8px_24px_rgba(124,58,237,0.4)] transition hover:bg-[#6D28D9] active:scale-95 disabled:opacity-50"
               >
-                ðŸŽ¤
+                🎤
               </button>
               <p className="mt-2 text-xs font-bold text-slate-500 dark:text-[#94A3B8]">
-                {t.isAnalyzing ? 'Analyzing with Gemini AIâ€¦' : 'Tap microphone to begin (1 min limit)'}
+                {t.isAnalyzing
+                  ? 'Analyzing with Gemini AI…'
+                  : dailyStatus?.biDone
+                  ? 'Had harian dicapai · Kembali esok'
+                  : t.activeSection === 'Part 3 · Decision'
+                  ? 'Tap microphone to speak spontaneously (1 min limit)'
+                  : 'Tap microphone to begin (1 min limit)'}
               </p>
             </div>
           ) : (
@@ -277,12 +330,12 @@ export function TestBI() {
         {/* SPM Speaking Tips Card */}
         <div className="rounded-[22px] border border-slate-200/80 bg-slate-50 p-4 dark:border-white/10 dark:bg-white/5">
           <div className="text-xs font-black text-slate-800 dark:text-[#F8FAFC]">
-            ðŸ’¡ SPM Speaking Tips
+            💡 SPM Speaking Tips
           </div>
           <ul className="mt-2 space-y-1 text-xs text-slate-600 dark:text-slate-300">
-            <li>â€¢ Use discourse markers: <em>Furthermore, In addition, Consequently</em>.</li>
-            <li>â€¢ Elaborate points with real-life examples to fill your 1 minute.</li>
-            <li>â€¢ Maintain smooth pacing and natural pronunciation.</li>
+            <li>• Use discourse markers: <em>Furthermore, In addition, Consequently</em>.</li>
+            <li>• Elaborate points with real-life examples to fill your 1 minute.</li>
+            <li>• Maintain smooth pacing and natural pronunciation.</li>
           </ul>
         </div>
       </div>
@@ -363,7 +416,7 @@ export function TestBI() {
                 onClick={handleNextQuestion}
                 className="rounded-xl bg-[#7C3AED] py-3 text-xs font-black text-white shadow-md hover:bg-[#6D28D9]"
               >
-                Next Part â†»
+                Next Part →
               </button>
               <button
                 type="button"

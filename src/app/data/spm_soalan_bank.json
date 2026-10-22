@@ -1,0 +1,810 @@
+{
+  "meta": {
+    "version": "1.0",
+    "tarikh": "2026-10-19",
+    "nota": "Soalan asal untuk latihan, ditulis mengikut struktur Ujian Bertutur SPM (1103/3 dan 1119/3). Bukan soalan peperiksaan sebenar. Perlu disemak oleh guru sebelum digunakan secara meluas.",
+    "formatBM": {
+      "bahagianA": "Taksiran Individu (40 markah): satu bahan rangsangan, 4 soalan (2 berdasarkan bahan, 2 KBAT). Membaca lebih kurang 3 minit, menjawab 3 hingga 5 minit.",
+      "bahagianB": "Taksiran Kumpulan (30 markah): satu bahan rangsangan dan satu tema perbincangan. Peperiksaan sebenar dalam kumpulan 3 hingga 5 calon, 12 hingga 15 minit. Di web ini ialah latihan solo."
+    },
+    "formatBI": {
+      "part1": "Soalan pendek individu (3 hingga 4 minit).",
+      "part2": "Individual long turn 1 minit selepas 20 saat persediaan, ditambah soalan respons untuk calon pendengar (3 hingga 4 minit).",
+      "part3": "Perbincangan berdasarkan mind map selepas 20 saat persediaan, diikuti soalan keputusan (4 hingga 5 minit). Bilangan pilihan mind map dalam fail ini ialah 3 mengikut keputusan pemilik; sahkan dengan kertas percubaan sebenar."
+    }
+  },
+  "bm": [
+    {
+      "id": "bm-01",
+      "tema": "Pengurusan sampah dan kitar semula",
+      "individu": {
+        "tajuk": "Sampah dan kitar semula",
+        "bahan": "Setiap hari, sebuah keluarga biasa di bandar menghasilkan hampir dua kilogram sampah. Sebahagian besar sampah itu terdiri daripada botol plastik, kertas dan tin minuman yang sebenarnya boleh dikitar semula. Pihak berkuasa tempatan telah menyediakan tong kitar semula berwarna di taman-taman perumahan, tetapi masih ramai penduduk yang membuang semua sampah ke dalam satu tong. Jika amalan ini berterusan, tapak pelupusan akan cepat penuh dan alam sekitar tercemar.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Apakah jenis sampah yang boleh dikitar semula berdasarkan bahan di atas?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Mengapakah tapak pelupusan sampah akan cepat penuh?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, mengapakah masih ramai orang tidak mengasingkan sampah walaupun tong kitar semula telah disediakan?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Cadangkan langkah yang boleh diambil oleh sekolah untuk memupuk amalan kitar semula dalam kalangan murid."
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Usaha meningkatkan amalan kitar semula",
+        "bahan": "Kitar semula bukan sekadar kempen bermusim. Di sesetengah negara, rakyat dikenakan denda jika tidak mengasingkan sampah, manakala di tempat lain, penduduk diberi ganjaran seperti baucar apabila menyerahkan barang kitar semula. Di Malaysia, tahap kesedaran masyarakat masih berbeza-beza antara satu kawasan dengan kawasan yang lain.",
+        "soalanPerbincangan": "Bincangkan usaha yang boleh dilakukan untuk meningkatkan amalan kitar semula dalam kalangan masyarakat."
+      }
+    },
+    {
+      "id": "bm-02",
+      "tema": "Amalan menabung",
+      "individu": {
+        "tajuk": "Menabung sejak muda",
+        "bahan": "Menabung ialah amalan menyimpan sebahagian wang yang diperoleh untuk kegunaan masa hadapan. Ramai remaja kini lebih gemar berbelanja untuk membeli gajet terkini dan makanan segera berbanding menyimpan wang. Sedangkan, wang simpanan boleh digunakan ketika kecemasan, untuk melanjutkan pelajaran atau memulakan perniagaan kecil. Sebuah bank telah memperkenalkan akaun simpanan khas untuk pelajar tanpa had deposit minimum bagi menggalakkan budaya menabung sejak kecil.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Apakah yang dimaksudkan dengan menabung berdasarkan bahan di atas?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Nyatakan dua kegunaan wang simpanan menurut bahan tersebut."
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Mengapakah amalan menabung penting untuk remaja walaupun mereka belum bekerja?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Bagaimanakah ibu bapa boleh membantu anak-anak membentuk tabiat menabung? Berikan cadangan anda."
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Pengurusan kewangan golongan muda",
+        "bahan": "Dengan kemudahan pembayaran digital, membeli-belah kini hanya mengambil masa beberapa saat. Kajian menunjukkan sebahagian golongan muda menghabiskan gaji pertama mereka dalam masa yang singkat dan terpaksa berhutang pada hujung bulan. Keadaan ini menimbulkan persoalan tentang kepentingan didikan kewangan sejak di bangku sekolah.",
+        "soalanPerbincangan": "Bincangkan cara-cara untuk menggalakkan golongan muda mengurus kewangan dengan bijak."
+      }
+    },
+    {
+      "id": "bm-03",
+      "tema": "Keselamatan dalam talian",
+      "individu": {
+        "tajuk": "Telefon pintar dan keselamatan maklumat",
+        "bahan": "Telefon pintar memudahkan kita berhubung, mencari maklumat dan belajar. Namun, penggunaan yang tidak terkawal membawa pelbagai kesan buruk. Ada murid yang tidur lewat kerana melayari media sosial, manakala ada yang terjebak dengan penipuan dalam talian setelah menekan pautan yang tidak dikenali. Sebuah sekolah telah mengadakan ceramah kesedaran supaya murid lebih berhati-hati dengan maklumat peribadi mereka di internet.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Apakah kebaikan telefon pintar berdasarkan bahan di atas?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Mengapakah sesetengah murid tidur lewat?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, bagaimanakah murid boleh melindungi maklumat peribadi mereka di internet?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Jika rakan anda terkena penipuan dalam talian, apakah nasihat yang akan anda berikan kepadanya?"
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Kesan media sosial dalam kalangan remaja",
+        "bahan": "Media sosial membolehkan remaja berkongsi pengalaman dan mendapat kawan baharu. Pada masa yang sama, kes buli siber dan penyebaran berita palsu semakin meningkat dalam kalangan pengguna muda. Pihak sekolah dan ibu bapa kini bimbang tentang keselamatan anak-anak di ruang digital.",
+        "soalanPerbincangan": "Bincangkan kesan penggunaan media sosial dalam kalangan remaja dan langkah mengatasi kesan buruknya."
+      }
+    },
+    {
+      "id": "bm-04",
+      "tema": "Pemakanan sihat",
+      "individu": {
+        "tajuk": "Makanan di kantin sekolah",
+        "bahan": "Kantin sekolah ialah tempat murid mendapatkan makanan semasa waktu rehat. Sebuah kajian mendapati kebanyakan murid memilih makanan bergoreng dan minuman manis kerana harganya murah dan rasanya sedap. Akibatnya, kes obesiti dalam kalangan kanak-kanak semakin meningkat. Kementerian Kesihatan menggalakkan pengusaha kantin menyediakan lebih banyak pilihan buah-buahan, sayur-sayuran dan air kosong. Beberapa sekolah turut mengadakan kempen sarapan sihat setiap minggu supaya murid lebih mengenali makanan yang berkhasiat.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Mengapakah murid memilih makanan bergoreng dan minuman manis?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Apakah usaha yang digalakkan oleh Kementerian Kesihatan terhadap pengusaha kantin?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, adakah harga makanan sihat menjadi punca murid kurang memilihnya? Jelaskan."
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Cadangkan cara untuk menjadikan makanan sihat lebih menarik kepada murid."
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Amalan gaya hidup sihat",
+        "bahan": "Kadar penyakit kronik seperti kencing manis dan darah tinggi semakin meningkat dalam kalangan rakyat Malaysia, termasuk golongan muda. Pakar kesihatan menjelaskan bahawa gaya hidup yang kurang aktif dan pemakanan yang tidak seimbang menjadi punca utama.",
+        "soalanPerbincangan": "Bincangkan langkah-langkah untuk memupuk amalan gaya hidup sihat dalam kalangan masyarakat."
+      }
+    },
+    {
+      "id": "bm-05",
+      "tema": "Pencemaran sungai",
+      "individu": {
+        "tajuk": "Memelihara sungai",
+        "bahan": "Sungai merupakan sumber air bersih dan tempat tinggal pelbagai hidupan. Namun, di beberapa kawasan, sungai tercemar akibat pembuangan sisa kilang, sampah-sarap dan najis haiwan ternakan. Air yang keruh dan berbau busuk menyebabkan ikan mati dan penduduk setempat berdepan risiko penyakit. Sebuah pertubuhan sukarelawan telah mengadakan gotong-royong membersihkan sungai setiap bulan dengan sokongan penduduk kampung. Penduduk berharap pihak berkuasa dapat mengambil tindakan yang lebih tegas.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Nyatakan tiga punca pencemaran sungai berdasarkan bahan di atas."
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Apakah akibat air sungai yang tercemar kepada penduduk setempat?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, mengapakah gotong-royong sahaja tidak mencukupi untuk menyelesaikan masalah pencemaran sungai?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Apakah tindakan yang wajar diambil oleh pihak berkuasa terhadap kilang yang membuang sisa ke sungai?"
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Pencemaran udara",
+        "bahan": "Pencemaran udara akibat asap kenderaan dan pembakaran terbuka menjejaskan kesihatan penduduk bandar. Pada musim kemarau, jerebu sering menyebabkan sekolah ditutup dan penduduk mengalami masalah pernafasan. Pelbagai pihak telah mengemukakan cadangan, tetapi pelaksanaannya masih menjadi cabaran besar.",
+        "soalanPerbincangan": "Bincangkan punca dan langkah mengatasi masalah pencemaran udara di negara kita."
+      }
+    },
+    {
+      "id": "bm-06",
+      "tema": "Budaya membaca",
+      "individu": {
+        "tajuk": "Membaca dalam era digital",
+        "bahan": "Membaca ialah jambatan ilmu. Walau bagaimanapun, tinjauan Perpustakaan Negara menunjukkan sebahagian besar rakyat hanya membaca beberapa buah buku setahun. Remaja lebih suka menonton video pendek berbanding membaca buku. Bagi menarik minat mereka, perpustakaan awam kini menyediakan buku digital yang boleh dipinjam melalui aplikasi telefon secara percuma. Sebuah sekolah turut menyediakan sudut bacaan di setiap kelas, tetapi murid jarang menggunakannya kerana tiada aktiviti yang menarik.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Apakah yang dimaksudkan dengan membaca sebagai jambatan ilmu?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Bagaimanakah perpustakaan awam menarik minat remaja untuk membaca?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, adakah buku digital sesuai menggantikan buku bercetak? Berikan alasan anda."
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Cadangkan aktiviti yang boleh dijalankan oleh sekolah untuk menggalakkan budaya membaca."
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Budaya membaca dalam kalangan masyarakat",
+        "bahan": "Banyak negara maju mempunyai masyarakat yang gemar membaca sejak kecil. Di Malaysia, kempen membaca telah dijalankan sejak sekian lama, namun hasilnya masih belum memuaskan. Sesetengah pihak berpendapat bahawa pengaruh teknologi dan gaya hidup moden turut menjadi sebab utama.",
+        "soalanPerbincangan": "Bincangkan cara-cara untuk memupuk budaya membaca dalam kalangan masyarakat Malaysia."
+      }
+    },
+    {
+      "id": "bm-07",
+      "tema": "Menghormati warga emas",
+      "individu": {
+        "tajuk": "Warga emas dan masyarakat",
+        "bahan": "Warga emas ialah golongan yang telah banyak berjasa kepada keluarga dan negara. Namun, ada antara mereka yang hidup keseorangan kerana anak-anak bekerja jauh di bandar. Sebuah badan bukan kerajaan telah mengadakan lawatan bulanan ke rumah warga emas dan membawa bersama pelajar sekolah untuk berbual, memasak dan membersihkan rumah mereka. Kehadiran mereka dinanti-nantikan oleh warga emas yang sering berasa sunyi.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Mengapakah ada warga emas yang hidup keseorangan?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Apakah aktiviti yang dijalankan oleh badan bukan kerajaan itu?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, apakah faedah yang diperoleh pelajar apabila bergaul dengan warga emas?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Bagaimanakah anda boleh membantu warga emas di kawasan perumahan anda?"
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Penjagaan ibu bapa",
+        "bahan": "Masyarakat Malaysia terkenal dengan sikap hormat-menghormati. Namun, kes penghantaran ibu bapa ke rumah jagaan semakin menjadi perhatian dan menimbulkan perdebatan dalam kalangan masyarakat. Ada yang berpendapat bahawa kesibukan bekerja menyebabkan anak-anak kurang masa untuk menjaga ibu bapa mereka.",
+        "soalanPerbincangan": "Bincangkan tanggungjawab anak-anak terhadap ibu bapa yang sudah lanjut usia."
+      }
+    },
+    {
+      "id": "bm-08",
+      "tema": "Usahawan muda",
+      "individu": {
+        "tajuk": "Anak muda dan perniagaan",
+        "bahan": "Semakin ramai anak muda memilih menjadi usahawan selepas tamat persekolahan. Mereka menjual produk melalui media sosial dengan modal yang kecil. Sebuah agensi kerajaan menyediakan latihan dan pinjaman mudah bagi membantu mereka. Walau bagaimanapun, sesetengah usahawan baharu gagal kerana kurang pengalaman mengurus perniagaan dan tidak pandai merancang kewangan. Penggunaan media sosial yang meluas membuka peluang besar, tetapi persaingan juga semakin sengit.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Bagaimanakah anak muda memasarkan produk mereka?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Apakah bantuan yang disediakan oleh agensi kerajaan?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, mengapakah sesetengah usahawan baharu gagal?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Jika anda ingin memulakan perniagaan kecil, apakah langkah yang akan anda ambil?"
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Pemilihan kerjaya",
+        "bahan": "Ekonomi digital membuka peluang kerjaya baharu seperti pereka grafik, pengaturcara dan pemasar dalam talian. Namun, sebahagian pelajar masih memilih kerjaya tradisional kerana kurang pendedahan tentang bidang-bidang baharu ini. Pendedahan awal melalui bimbingan kerjaya dipercayai dapat membantu pelajar membuat keputusan yang tepat.",
+        "soalanPerbincangan": "Bincangkan faktor yang perlu dipertimbangkan oleh pelajar dalam memilih kerjaya."
+      }
+    },
+    {
+      "id": "bm-09",
+      "tema": "Kesihatan mental pelajar",
+      "individu": {
+        "tajuk": "Tekanan menjelang peperiksaan",
+        "bahan": "Menjelang peperiksaan, ramai pelajar berasa tertekan dan resah. Ada yang tidak dapat tidur dengan lena dan hilang selera makan. Pakar kaunseling menasihati pelajar supaya membuat jadual belajar yang teratur, bersenam dan berkongsi masalah dengan orang yang dipercayai. Sebuah sekolah menyediakan sudut kaunseling supaya murid dapat berbincang tanpa rasa malu. Ibu bapa dan guru juga diminta lebih peka terhadap perubahan sikap anak-anak.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Apakah tanda-tanda pelajar yang mengalami tekanan menjelang peperiksaan?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Nyatakan nasihat yang diberikan oleh pakar kaunseling."
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, mengapakah sesetengah pelajar berasa malu untuk meminta bantuan?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Apakah peranan rakan sebaya dalam membantu rakan yang sedang tertekan?"
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Kesihatan mental pelajar",
+        "bahan": "Tekanan akademik bukan sahaja dialami oleh pelajar yang lemah, malah pelajar cemerlang juga sering bimbang untuk mengekalkan keputusan yang baik. Kesihatan mental kini diberi perhatian serius oleh pihak sekolah. Sokongan daripada keluarga, rakan dan guru dipercayai memainkan peranan penting dalam hal ini.",
+        "soalanPerbincangan": "Bincangkan cara-cara untuk membantu pelajar menangani tekanan."
+      }
+    },
+    {
+      "id": "bm-10",
+      "tema": "Penjimatan tenaga",
+      "individu": {
+        "tajuk": "Menjimatkan elektrik",
+        "bahan": "Bil elektrik yang tinggi menjadi beban kepada banyak keluarga. Kebiasaannya, peralatan elektrik dibiarkan terpasang walaupun tidak digunakan, seperti lampu di bilik kosong dan kipas ketika tiada orang. Pihak berkuasa menggalakkan orang ramai menggunakan lampu jimat tenaga dan memasang panel solar. Selain menjimatkan wang, tindakan ini dapat mengurangkan pencemaran daripada loji janakuasa. Namun, ramai penduduk masih beranggapan bahawa kos pemasangannya terlalu mahal.",
+        "soalan": [
+          {
+            "n": 1,
+            "jenis": "bahan",
+            "teks": "Apakah peralatan yang sering dibiarkan terpasang?"
+          },
+          {
+            "n": 2,
+            "jenis": "bahan",
+            "teks": "Apakah dua faedah penjimatan tenaga berdasarkan bahan di atas?"
+          },
+          {
+            "n": 3,
+            "jenis": "kbat",
+            "teks": "Pada pendapat anda, mengapakah ramai orang masih tidak menjimatkan elektrik?"
+          },
+          {
+            "n": 4,
+            "jenis": "kbat",
+            "teks": "Cadangkan cara untuk memupuk amalan menjimatkan tenaga di sekolah."
+          }
+        ]
+      },
+      "kumpulan": {
+        "tajuk": "Tenaga boleh diperbaharui",
+        "bahan": "Penggunaan tenaga boleh diperbaharui seperti tenaga solar semakin mendapat perhatian dunia. Walau bagaimanapun, kos pemasangannya masih tinggi bagi kebanyakan isi rumah. Pelbagai insentif ditawarkan oleh kerajaan untuk menarik minat isi rumah, namun penerimaan masyarakat masih perlahan.",
+        "soalanPerbincangan": "Bincangkan usaha untuk menggalakkan penggunaan tenaga boleh diperbaharui di negara kita."
+      }
+    }
+  ],
+  "bi": [
+    {
+      "id": "bi-01",
+      "theme": "Health and fitness",
+      "part1": [
+        "What is your name and where do you live?",
+        "What do you usually do after school?",
+        "Do you prefer to stay at home or go out during weekends? Why?",
+        "What is your favourite subject at school?",
+        "How do you usually go to school?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A sport or game you enjoy",
+          "instruction": "Talk about a sport or game you enjoy.",
+          "youShouldSay": [
+            "what sport or game it is",
+            "who you play it with",
+            "where and when you play it",
+            "why you enjoy it"
+          ],
+          "listenerQuestion": "Do you enjoy the same sport or game? Why or why not?"
+        },
+        "candidateB": {
+          "title": "A healthy habit you practise",
+          "instruction": "Talk about a healthy habit you practise.",
+          "youShouldSay": [
+            "what the habit is",
+            "when you started it",
+            "how it helps you",
+            "why others should follow it"
+          ],
+          "listenerQuestion": "Would you like to try this habit? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can students stay healthy?",
+        "options": [
+          "Eat balanced meals",
+          "Exercise regularly",
+          "Get enough sleep"
+        ],
+        "decisionQuestion": "Which one is the most important for students? Why?"
+      }
+    },
+    {
+      "id": "bi-02",
+      "theme": "Technology",
+      "part1": [
+        "Tell me about your family.",
+        "What do you like to do in your free time?",
+        "Do you use a phone every day? What do you use it for?",
+        "What did you do last weekend?",
+        "What would you like to do after SPM?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A gadget you use every day",
+          "instruction": "Talk about a gadget you use every day.",
+          "youShouldSay": [
+            "what it is",
+            "how often you use it",
+            "what you use it for",
+            "why it is important to you"
+          ],
+          "listenerQuestion": "Do you think you spend too much time on your gadgets? Why?"
+        },
+        "candidateB": {
+          "title": "A website or application that helps you learn",
+          "instruction": "Talk about a website or application that helps you learn.",
+          "youShouldSay": [
+            "its name",
+            "how you found it",
+            "how it helps you",
+            "whether you would recommend it"
+          ],
+          "listenerQuestion": "Would you like to use the same application? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can students use technology wisely?",
+        "options": [
+          "Set screen time limits",
+          "Use it for learning",
+          "Be careful with personal information"
+        ],
+        "decisionQuestion": "Which suggestion is the most useful? Why?"
+      }
+    },
+    {
+      "id": "bi-03",
+      "theme": "Environment",
+      "part1": [
+        "Where do you live and what do you like about your area?",
+        "Is your neighbourhood clean? Tell me more.",
+        "Do you recycle at home? Why or why not?",
+        "What kind of weather do you enjoy?",
+        "What do you do to save water or electricity at home?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A place in nature you would like to visit",
+          "instruction": "Talk about a place in nature you would like to visit.",
+          "youShouldSay": [
+            "where it is",
+            "how you would get there",
+            "what you would do there",
+            "why it attracts you"
+          ],
+          "listenerQuestion": "Have you been to a place like this before?"
+        },
+        "candidateB": {
+          "title": "Something you do to protect the environment",
+          "instruction": "Talk about something you do to protect the environment.",
+          "youShouldSay": [
+            "what you do",
+            "when you do it",
+            "who does it with you",
+            "why it is important"
+          ],
+          "listenerQuestion": "Do you think it is easy to protect the environment? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can we reduce plastic waste?",
+        "options": [
+          "Bring your own bag",
+          "Recycle plastic items",
+          "Avoid single-use plastic"
+        ],
+        "decisionQuestion": "Which one will work best in your school? Why?"
+      }
+    },
+    {
+      "id": "bi-04",
+      "theme": "School life",
+      "part1": [
+        "What is your name, and which school do you attend?",
+        "Tell me about your best friend.",
+        "What do you enjoy most about school?",
+        "Which co-curricular activity are you involved in?",
+        "What do you usually do during recess?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A teacher who has inspired you",
+          "instruction": "Talk about a teacher who has inspired you.",
+          "youShouldSay": [
+            "who the teacher is",
+            "what subject he or she teaches",
+            "how the teacher helps students",
+            "why you admire him or her"
+          ],
+          "listenerQuestion": "Would you like to become a teacher? Why or why not?"
+        },
+        "candidateB": {
+          "title": "A school event you remember well",
+          "instruction": "Talk about a school event you remember well.",
+          "youShouldSay": [
+            "what the event was",
+            "when it took place",
+            "what you did",
+            "why you remember it"
+          ],
+          "listenerQuestion": "Would you like to join a similar event again? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can schools make learning more enjoyable?",
+        "options": [
+          "Use games in lessons",
+          "Organise learning trips",
+          "Give students more group activities"
+        ],
+        "decisionQuestion": "Which idea is the most effective? Why?"
+      }
+    },
+    {
+      "id": "bi-05",
+      "theme": "Festivals and culture",
+      "part1": [
+        "Where do you come from?",
+        "What festivals do you celebrate with your family?",
+        "What food do you enjoy during festive seasons?",
+        "How do you usually celebrate your birthday?",
+        "Do you like meeting your relatives? Why?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A festival you like",
+          "instruction": "Talk about a festival you like.",
+          "youShouldSay": [
+            "which festival it is",
+            "how it is celebrated",
+            "what food or clothes are part of it",
+            "why you like it"
+          ],
+          "listenerQuestion": "Do you celebrate it in the same way? Why or why not?"
+        },
+        "candidateB": {
+          "title": "A traditional game or custom in your culture",
+          "instruction": "Talk about a traditional game or custom in your culture.",
+          "youShouldSay": [
+            "what it is",
+            "who plays or practises it",
+            "how it is done",
+            "why it should be preserved"
+          ],
+          "listenerQuestion": "Have you tried it before?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can we help young people appreciate our culture?",
+        "options": [
+          "Hold cultural days at school",
+          "Learn traditional crafts",
+          "Visit museums and heritage sites"
+        ],
+        "decisionQuestion": "Which one is the best way? Why?"
+      }
+    },
+    {
+      "id": "bi-06",
+      "theme": "Community and volunteering",
+      "part1": [
+        "What do you do to help your family at home?",
+        "Do you help your neighbours? How?",
+        "What kind of person are you?",
+        "Tell me about a time you helped someone.",
+        "What would you like to be in the future?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A time you helped someone",
+          "instruction": "Talk about a time you helped someone.",
+          "youShouldSay": [
+            "who you helped",
+            "what the problem was",
+            "how you helped",
+            "how you felt afterwards"
+          ],
+          "listenerQuestion": "Would you help in the same situation again? Why?"
+        },
+        "candidateB": {
+          "title": "A volunteer activity you would like to join",
+          "instruction": "Talk about a volunteer activity you would like to join.",
+          "youShouldSay": [
+            "what the activity is",
+            "where it takes place",
+            "what you would do",
+            "why it is meaningful"
+          ],
+          "listenerQuestion": "Would you invite your friends to join? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can students contribute to their community?",
+        "options": [
+          "Join clean-up campaigns",
+          "Visit the elderly",
+          "Raise funds for charity"
+        ],
+        "decisionQuestion": "Which activity would benefit the community most? Why?"
+      }
+    },
+    {
+      "id": "bi-07",
+      "theme": "Travel and holidays",
+      "part1": [
+        "What is your name and where do you stay?",
+        "Do you like travelling? Why?",
+        "Where did you go during the last school holiday?",
+        "Do you prefer travelling by bus, car or plane? Why?",
+        "What do you usually bring when you travel?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A trip you remember well",
+          "instruction": "Talk about a trip you remember well.",
+          "youShouldSay": [
+            "where you went",
+            "who went with you",
+            "what you did there",
+            "why it was memorable"
+          ],
+          "listenerQuestion": "Would you like to go there again? Why?"
+        },
+        "candidateB": {
+          "title": "A place in Malaysia that tourists should visit",
+          "instruction": "Talk about a place in malaysia that tourists should visit.",
+          "youShouldSay": [
+            "where it is",
+            "what visitors can do there",
+            "what food they can try",
+            "why it is special"
+          ],
+          "listenerQuestion": "Have you visited a place like this?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can families enjoy local holidays more?",
+        "options": [
+          "Plan activities for all ages",
+          "Choose safe and clean places",
+          "Prepare a reasonable budget"
+        ],
+        "decisionQuestion": "Which is the most important consideration? Why?"
+      }
+    },
+    {
+      "id": "bi-08",
+      "theme": "Food and lifestyle",
+      "part1": [
+        "What is your name and what do you like to do?",
+        "What did you have for breakfast today?",
+        "Do you cook at home? What can you cook?",
+        "What is your favourite food? Why?",
+        "Do you prefer eating at home or at restaurants?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A meal you enjoy cooking or eating",
+          "instruction": "Talk about a meal you enjoy cooking or eating.",
+          "youShouldSay": [
+            "what the meal is",
+            "who prepares it",
+            "what ingredients are used",
+            "why you enjoy it"
+          ],
+          "listenerQuestion": "Would you like to learn to cook this meal? Why?"
+        },
+        "candidateB": {
+          "title": "A food stall or restaurant you like",
+          "instruction": "Talk about a food stall or restaurant you like.",
+          "youShouldSay": [
+            "where it is",
+            "what they sell",
+            "how the service is",
+            "why you recommend it"
+          ],
+          "listenerQuestion": "Would you like to try it? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can families waste less food?",
+        "options": [
+          "Plan meals in advance",
+          "Store leftovers properly",
+          "Buy only what is needed"
+        ],
+        "decisionQuestion": "Which is the easiest for families to do? Why?"
+      }
+    },
+    {
+      "id": "bi-09",
+      "theme": "Hobbies and free time",
+      "part1": [
+        "Tell me about yourself.",
+        "What are your hobbies?",
+        "Do you like reading? What do you read?",
+        "How do you spend your weekends?",
+        "Do you prefer to spend time alone or with friends? Why?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "A hobby you enjoy",
+          "instruction": "Talk about a hobby you enjoy.",
+          "youShouldSay": [
+            "what it is",
+            "when you do it",
+            "who you do it with",
+            "why you enjoy it"
+          ],
+          "listenerQuestion": "Would you like to try this hobby? Why?"
+        },
+        "candidateB": {
+          "title": "A book, film or programme you would recommend",
+          "instruction": "Talk about a book, film or programme you would recommend.",
+          "youShouldSay": [
+            "its title",
+            "what it is about",
+            "who it is suitable for",
+            "why you recommend it"
+          ],
+          "listenerQuestion": "Would you like to read or watch it? Why?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can students make good use of their free time?",
+        "options": [
+          "Read books",
+          "Learn a new skill",
+          "Do sports with friends"
+        ],
+        "decisionQuestion": "Which activity is the most beneficial? Why?"
+      }
+    },
+    {
+      "id": "bi-10",
+      "theme": "Money and the future",
+      "part1": [
+        "What is your name?",
+        "Do you receive pocket money? How do you use it?",
+        "Do you save money? Why or why not?",
+        "What would you like to buy in the future?",
+        "What job would you like to have? Why?"
+      ],
+      "part2": {
+        "candidateA": {
+          "title": "Something you saved money to buy",
+          "instruction": "Talk about something you saved money to buy.",
+          "youShouldSay": [
+            "what you bought",
+            "how long you saved",
+            "how you felt",
+            "why it was important to you"
+          ],
+          "listenerQuestion": "Do you think saving is difficult? Why?"
+        },
+        "candidateB": {
+          "title": "A job you would like to have in the future",
+          "instruction": "Talk about a job you would like to have in the future.",
+          "youShouldSay": [
+            "what the job is",
+            "what skills you need",
+            "what you would do every day",
+            "why it attracts you"
+          ],
+          "listenerQuestion": "Do you think this job is easy to get? Why or why not?"
+        }
+      },
+      "part3": {
+        "centralQuestion": "How can teenagers learn to manage money wisely?",
+        "options": [
+          "Make a simple budget",
+          "Save a part of their allowance",
+          "Avoid unnecessary spending"
+        ],
+        "decisionQuestion": "Which habit is the most important? Why?"
+      }
+    }
+  ]
+}

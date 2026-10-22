@@ -71,8 +71,8 @@ export function LearningFocusCard({
         </div>
         <p className="mt-2 text-xs italic leading-relaxed text-slate-600 dark:text-slate-300">
           {topCategory
-            ? `&ldquo;Saya nampak anda masih ada ruang untuk memantapkan ${topCategory}. Teruskan latihan ringkas hari ini!&rdquo;`
-            : '&ldquo;Ambil masa 5 minit untuk berlatih bercakap setiap hari bagi membina keyakinan lisan.&rdquo;'}
+            ? `“Saya nampak anda masih ada ruang untuk memantapkan ${topCategory}. Teruskan latihan ringkas hari ini!”`
+            : '“Ambil masa 5 minit untuk berlatih bercakap setiap hari bagi membina keyakinan lisan.”'}
         </p>
       </div>
 

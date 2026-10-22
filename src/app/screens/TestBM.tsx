@@ -3,26 +3,31 @@ import { useState, useEffect, useRef } from 'react';
 import { AppShell } from '../shell';
 import { InfoDialog, MetricBar } from '../dialogs';
 import { useRouter } from '../router';
+import { useAuth } from '../../context/AuthContext';
 import { formatTimer } from '../lib/audio';
+import { fetchDailyTestStatus, type DailyTestStatus } from '../lib/data';
 import { useBmTest } from './useBmTest';
 import {
   SECTIONS,
-  SECTION_SETS,
   BM_CRITERIA_A,
   BM_CRITERIA_B,
-  BM_ORAL_THEMES,
-  pickRandomBmTheme,
-  type BmOralTheme,
   scoreColor,
   scoreLabel,
 } from './testbmData';
 
 export function TestBM() {
   const { navigate } = useRouter();
+  const { user } = useAuth();
   const t = useBmTest();
+  const [dailyStatus, setDailyStatus] = useState<DailyTestStatus | null>(null);
   const stoppedRef = useRef(false);
-  const [activeTheme, setActiveTheme] = useState<BmOralTheme>(() => pickRandomBmTheme());
-  const [levelFilter, setLevelFilter] = useState<'all' | 4 | 5>('all');
+
+  useEffect(() => {
+    if (!user) return;
+    fetchDailyTestStatus(user.id)
+      .then(setDailyStatus)
+      .catch((err) => console.warn('[testbm] limit check error:', err));
+  }, [user]);
 
   // Timer: SATU sumber masa (countdown dari 300 saat / 05:00 ke 00:00)
   const [countdown, setCountdown] = useState(300);
@@ -45,36 +50,47 @@ export function TestBM() {
     return () => clearInterval(interval);
   }, [t.isRecording]);
 
-  const activeSet = SECTION_SETS[t.activeSection];
-  const activeExercise = activeTheme.individual[0];
-  const stimulusText = activeExercise?.stimulusText || activeSet.reading;
-  const stimulusSource = activeExercise?.sourceReference || activeExercise?.sourceTitle || '(Buku Teks SPM)';
-  const questionText = activeExercise?.instruction || 'Baca petikan bahan rangsangan di atas dengan sebutan dan intonasi yang betul, kemudian ulaskan secara lisan dalam tempoh 5 minit.';
+  // --- Bank SPM Sebenar (spm_soalan_bank.json) sebagai sumber data tunggal ---
+  const bankSet = t.activeBankSet;
+  const stimulusTitle =
+    t.activeSection === 'Bahagian A (Membaca)'
+      ? (bankSet.individu?.tajuk || 'Petikan Rangsangan')
+      : (bankSet.kumpulan?.tajuk || 'Bahan Perbincangan');
+  const stimulusText =
+    t.activeSection === 'Bahagian A (Membaca)'
+      ? (bankSet.individu?.bahan || '')
+      : (bankSet.kumpulan?.bahan || '');
 
-  const groupExercise = activeTheme.group[0];
-  const groupStimulus = groupExercise?.stimulusText || activeSet.reading;
-  const groupSource = groupExercise?.sourceReference || activeExercise?.sourceReference || '(Buku Teks SPM)';
-  const groupQuestion = groupExercise?.instruction || 'Bincangkan isu ini bersama ahli kumpulan anda dan berikan cadangan serta hujah yang bernas secara lisan dalam tempoh 5 minit.';
+  // 4 soalan individu Bahagian A (2 Bahan + 2 KBAT)
+  const individualQuestions = t.individualQuestions ?? [];
+  const questionText = individualQuestions.map((q) => `${q.n}. ${q.text}`).join('\n');
+
+  // Soalan perbincangan Bahagian B (solo practice)
+  const groupQuestions = t.groupQuestions ?? [];
+  const groupQuestion =
+    groupQuestions.length > 0
+      ? groupQuestions.map((q) => `${q.n}. ${q.text}`).join('\n')
+      : (bankSet.kumpulan?.soalanPerbincangan ||
+        'Bincangkan isu ini bersama ahli kumpulan anda dan berikan cadangan serta hujah yang bernas secara lisan dalam tempoh 5 minit.');
 
   const currentPrompt =
     t.activeSection === 'Bahagian A (Membaca)'
-      ? `Tema: Tingkatan ${activeTheme.level} · ${activeTheme.title}\nPetikan Rangsangan untuk dibaca (Taksiran Individu):\n"${stimulusText}"\n${stimulusSource}\n\nArahan/Soalan: ${questionText}`
-      : `Tema: Tingkatan ${activeTheme.level} · ${activeTheme.title}\nBahan Rangsangan (Taksiran Kumpulan):\n"${groupStimulus}"\n${groupSource}\n\nArahan/Soalan: ${groupQuestion}`;
+      ? `Tema: ${bankSet.tema} (${stimulusTitle})\nPetikan Rangsangan untuk dibaca (Taksiran Individu):\n"${stimulusText}"\n\nArahan/Soalan:\n${questionText}`
+      : `Tema: ${bankSet.tema} (${stimulusTitle})\nBahan Rangsangan (Taksiran Kumpulan):\n"${stimulusText}"\n\nArahan/Soalan:\n${groupQuestion}`;
 
   const questionForAI = `${currentPrompt}\n\nArahan Penilaian: Pelajar menjawab soalan Ujian Lisan Bahasa Melayu SPM dalam rakaman 5 minit ini berpandukan bahan rangsangan di atas. Sila nilaikan intonasi, sebutan, kelancaran, dan tatabahasa secara menyeluruh.`;
   const result = t.finalResult;
 
-  const handleNextTheme = () => {
+  const handleNextBankSet = () => {
     stoppedRef.current = false;
     t.reset();
-    setActiveTheme(pickRandomBmTheme(activeTheme.id));
   };
 
-  const handleSelectTheme = (theme: BmOralTheme) => {
+  const handleSelectBankSet = (id: string) => {
     if (t.isRecording || t.isAnalyzing) return;
     stoppedRef.current = false;
     t.reset();
-    setActiveTheme(theme);
+    t.selectBankSet(id);
   };
 
   // Auto-stop: guna stoppedRef supaya t.stop dipanggil SEKALI sahaja per rakaman bila countdown capai 00:00
@@ -124,6 +140,7 @@ export function TestBM() {
       subtitle="Bahagian A & B — Penilaian AI Sebenar"
       activeRoute="/app/academy"
       onBack="/app/academy"
+      hideAds
     >
       {/* 1. Sticky LIVE RECORDING Banner */}
       {t.isRecording && (
@@ -192,57 +209,45 @@ export function TestBM() {
       <div className="mt-3.5 flex items-center justify-between rounded-[20px] border border-slate-200/80 bg-white p-3.5 shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
         <div>
           <div className="text-sm font-black text-slate-900 dark:text-[#F8FAFC]">
-            'Soalan 1 / 1'
+            {t.activeSection === 'Bahagian A (Membaca)' ? '4 Soalan Individu' : '1 Soalan Perbincangan'}
           </div>
           <div className="text-[11px] font-bold text-slate-400">
             {t.activeSection}
           </div>
         </div>
         <span className="rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-black text-[#1D4ED8] dark:bg-blue-950/40 dark:text-blue-300">
-          {t.activeSection === 'Bahagian A (Membaca)' ? 'Taksiran Individu' : 'Perbincangan'}
+          {t.activeSection === 'Bahagian A (Membaca)' ? 'Taksiran Individu (40 Markah)' : 'Perbincangan (30 Markah)'}
         </span>
       </div>
-      {/* Pemilih Tema Buku Teks (Tingkatan 4 & 5) */}
+
+      {/* Pemilih Set Bank Soalan SPM (10 Set Rasmi) */}
       <div className="mt-3 space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
-            PILIH TEMA BUKU TEKS
+            SET BANK SOALAN SPM (1103/3)
           </span>
-          <div className="flex gap-1">
-            {(['all', 4, 5] as const).map((lvl) => (
-              <button
-                key={lvl}
-                type="button"
-                onClick={() => setLevelFilter(lvl)}
-                className={`rounded-full px-2.5 py-0.5 text-[10px] font-extrabold transition ${
-                  levelFilter === lvl
-                    ? 'bg-[#7C3AED] text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-white/10 dark:text-slate-300'
-                }`}
-              >
-                {lvl === 'all' ? 'Semua' : `Tingkatan ${lvl}`}
-              </button>
-            ))}
-          </div>
+          <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
+            {t.bankSets.length} Set Tersedia
+          </span>
         </div>
 
-        {/* Carousel mendatar tema */}
+        {/* Carousel mendatar set SPM */}
         <div className="flex gap-2 overflow-x-auto pb-1.5">
-          {BM_ORAL_THEMES.filter((thm) => levelFilter === 'all' || thm.level === levelFilter).map((thm) => {
-            const isSel = thm.id === activeTheme.id;
+          {t.bankSets.map((s, idx) => {
+            const isSel = s.id === bankSet.id;
             return (
               <button
-                key={thm.id}
+                key={s.id}
                 type="button"
                 disabled={t.isRecording || t.isAnalyzing}
-                onClick={() => handleSelectTheme(thm)}
+                onClick={() => handleSelectBankSet(s.id)}
                 className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-extrabold transition ${
                   isSel
                     ? 'bg-[#7C3AED] text-white shadow-sm'
                     : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#0F172A] dark:text-slate-300'
                 }`}
               >
-                T{thm.level}: {thm.title}
+                Set {idx + 1}: {s.tema}
               </button>
             );
           })}
@@ -250,15 +255,15 @@ export function TestBM() {
 
         <div className="flex items-center justify-between pt-0.5">
           <div className="text-[11px] font-bold text-[#7C3AED]">
-            Tema dipilih: Tingkatan {activeTheme.level} · {activeTheme.title}
+            Tema dipilih: {bankSet.tema}
           </div>
           {!t.isRecording && !t.isAnalyzing && (
             <button
               type="button"
-              onClick={handleNextTheme}
+              onClick={handleNextBankSet}
               className="rounded-full bg-purple-500/10 px-2.5 py-0.5 text-[10px] font-black text-[#7C3AED] hover:bg-purple-500/20"
             >
-              Soalan Seterusnya ↻
+              Set Seterusnya ↻
             </button>
           )}
         </div>
@@ -268,14 +273,14 @@ export function TestBM() {
       {/* 5. Kandungan Mengikut Bahagian */}
       {t.activeSection === 'Bahagian A (Membaca)' ? (
         <div className="mt-3 space-y-3">
-          {/* Kad Petikan untuk dibaca (Font 16px, scrollable) */}
+          {/* Kad Petikan untuk dibaca */}
           <div className="rounded-[24px] border border-slate-200/80 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 dark:border-white/5">
               <span className="text-[11px] font-black uppercase tracking-wider text-[#7C3AED]">
-                📖 Petikan untuk dibaca
+                📖 Petikan untuk dibaca ({stimulusTitle})
               </span>
-              <span className="text-[10px] font-bold text-slate-400">
-                {stimulusSource}
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-white/10 dark:text-slate-300">
+                Bank SPM
               </span>
             </div>
 
@@ -285,18 +290,49 @@ export function TestBM() {
               </p>
             </div>
 
-            {/* Soalan 1 · Taksiran Individu */}
-            <div className="mt-3.5 rounded-[18px] border border-purple-500/20 bg-purple-500/5 p-3.5 dark:bg-purple-950/20">
-              <div className="text-[10px] font-black uppercase tracking-wider text-[#7C3AED]">
-                SOALAN 1 · TAKSIRAN INDIVIDU (40 MARKAH)
-              </div>
-              <p className="mt-1.5 text-sm font-extrabold text-slate-900 dark:text-[#F8FAFC]">
-                {questionText}
-              </p>
-              <p className="mt-2 text-xs text-slate-500 dark:text-[#94A3B8]">
-                📝 <span className="font-bold">Arahan:</span> Sila baca petikan di atas dengan sebutan dan intonasi yang betul, kemudian jawab soalan secara lisan dalam tempoh 5 minit.
+            <div className="mt-3 rounded-[16px] bg-purple-500/5 p-3 dark:bg-purple-950/20">
+              <p className="text-xs text-slate-600 dark:text-[#94A3B8]">
+                📝 <span className="font-bold">Arahan:</span> Sila baca petikan bahan rangsangan di atas dengan sebutan dan intonasi yang betul, kemudian jawab 4 soalan individu di bawah secara lisan dalam tempoh 5 minit.
               </p>
             </div>
+          </div>
+
+          {/* 4 KAD SOALAN INDIVIDU (2 Berdasarkan Bahan + 2 KBAT) */}
+          <div className="space-y-2.5">
+            <div className="px-1 text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-[#94A3B8]">
+              4 Soalan Individu (Jawab secara lisan):
+            </div>
+            {individualQuestions.map((q) => {
+              const isKbat = q.jenis === 'kbat';
+              return (
+                <div
+                  key={q.n}
+                  className={`rounded-[20px] border p-4 shadow-sm transition ${
+                    isKbat
+                      ? 'border-purple-500/30 bg-purple-500/[0.04] dark:border-purple-500/20 dark:bg-purple-950/20'
+                      : 'border-blue-500/30 bg-blue-500/[0.04] dark:border-blue-500/20 dark:bg-blue-950/20'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-slate-900 dark:text-[#F8FAFC]">
+                      Soalan {q.n}
+                    </span>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide ${
+                        isKbat
+                          ? 'bg-purple-500/15 text-[#7C3AED] dark:text-[#A78BFA]'
+                          : 'bg-blue-500/15 text-[#1D4ED8] dark:text-blue-300'
+                      }`}
+                    >
+                      {isKbat ? 'KBAT' : 'Berdasarkan Bahan'}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm font-bold leading-relaxed text-slate-800 dark:text-slate-100">
+                    {q.text}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       ) : (
@@ -304,26 +340,31 @@ export function TestBM() {
           <div className="rounded-[24px] border border-slate-200/80 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#0F172A]">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 dark:border-white/5">
               <span className="text-[11px] font-black uppercase tracking-wider text-[#7C3AED]">
-                👥 Bahan Rangsangan Perbincangan
+                👥 Bahan Rangsangan Perbincangan ({stimulusTitle})
               </span>
-              <span className="text-[10px] font-bold text-slate-400">
-                {groupSource}
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-white/10 dark:text-slate-300">
+                Bank SPM
               </span>
             </div>
             <div className="mt-3 max-h-[200px] overflow-y-auto rounded-[16px] bg-slate-50 p-3.5 dark:bg-white/5">
               <p className="text-[16px] font-normal leading-[28px] text-slate-800 dark:text-slate-200">
-                {groupStimulus}
+                {stimulusText}
               </p>
             </div>
             <div className="mt-3.5 rounded-[18px] border border-blue-500/20 bg-blue-500/5 p-3.5 dark:bg-blue-950/20">
-              <div className="text-[10px] font-black uppercase tracking-wider text-[#1D4ED8] dark:text-blue-300">
-                SOALAN 1 · TAKSIRAN KUMPULAN (30 MARKAH)
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#1D4ED8] dark:text-blue-300">
+                  SOALAN PERBINCANGAN KUMPULAN (30 MARKAH)
+                </span>
+                <span className="rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-black text-[#1D4ED8] dark:text-blue-300">
+                  Perbincangan
+                </span>
               </div>
-              <p className="mt-1.5 text-sm font-extrabold text-slate-900 dark:text-[#F8FAFC]">
+              <p className="mt-2 text-sm font-extrabold text-slate-900 dark:text-[#F8FAFC]">
                 {groupQuestion}
               </p>
               <p className="mt-2 text-xs text-slate-500 dark:text-[#94A3B8]">
-                📝 <span className="font-bold">Latihan solo. Dalam peperiksaan sebenar ini dijalankan dalam kumpulan 3-5 calon (12-15 minit).</span>
+                📝 <span className="font-bold">Latihan solo. Dalam peperiksaan SPM sebenar ini dijalankan dalam kumpulan 3-5 calon (12-15 minit). Berikan cadangan serta hujah bernas anda dalam rakaman 5 minit.</span>
               </p>
             </div>
           </div>
@@ -352,8 +393,27 @@ export function TestBM() {
         </div>
       )}
 
-      {/* 8. Butang Kawalan Rakaman */}
-      <div className="mt-4 flex gap-2 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+      {/* Daily Limit Reached Warning Banner */}
+      {dailyStatus?.bmDone && (
+        <div className="mt-4 rounded-[22px] border border-amber-500/30 bg-amber-500/10 p-4 text-center">
+          <div className="text-xs font-black text-amber-700 dark:text-amber-300">
+            ⚠️ Had Ujian Harian Dicapai (1/1 Selesai)
+          </div>
+          <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
+            Anda telah menyelesaikan 1 Ujian Lisan BM untuk hari ini. Kuota akan diperbaharui pada 12:00 AM waktu Malaysia (MYT). Sila kembali esok untuk latihan seterusnya.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/app')}
+            className="mt-3 rounded-full bg-[#7C3AED] px-4 py-1.5 text-xs font-black text-white shadow-sm"
+          >
+            Kembali ke Dashboard
+          </button>
+        </div>
+      )}
+
+      {/* 8. Butang Kawalan Rakaman — Diletakkan dalam aliran halaman dengan ruang bawah yang mencukupi dari bottom navigation */}
+      <div className="mt-6 flex gap-2 pb-6">
         {t.isAnalyzing ? (
           <button
             disabled
@@ -363,10 +423,32 @@ export function TestBM() {
           </button>
         ) : !t.isRecording ? (
           <button
-            onClick={() => void t.start()}
-            className="flex-1 rounded-[20px] bg-[#F59E0B] py-4 text-base font-black text-white shadow-[0_6px_20px_rgba(245,158,11,0.35)] transition hover:bg-[#D97706] active:scale-[0.98]"
+            onClick={() => {
+              if (dailyStatus?.bmDone) {
+                t.setInfo({
+                  icon: 'warning',
+                  title: 'Limit Test Reached',
+                  message: 'Limit test for today, come back tomorrow',
+                  primaryText: 'Dashboard',
+                  onPrimary: () => {
+                    t.setInfo(null);
+                    navigate('/app');
+                  },
+                  secondaryText: 'Tutup',
+                  onSecondary: () => t.setInfo(null),
+                });
+                return;
+              }
+              void t.start();
+            }}
+            disabled={dailyStatus?.bmDone}
+            className={`flex-1 rounded-[20px] py-4 text-base font-black text-white shadow-[0_6px_20px_rgba(245,158,11,0.35)] transition ${
+              dailyStatus?.bmDone
+                ? 'cursor-not-allowed bg-slate-400 opacity-60'
+                : 'bg-[#F59E0B] hover:bg-[#D97706] active:scale-[0.98]'
+            }`}
           >
-            🎙️ Mula Rakaman (05:00)
+            {dailyStatus?.bmDone ? 'Had Harian Dicapai (Kembali Esok)' : '🎙️ Mula Rakaman (05:00)'}
           </button>
         ) : (
           <button
@@ -490,10 +572,10 @@ export function TestBM() {
               </button>
               <button
                 type="button"
-                onClick={handleNextTheme}
+                onClick={handleNextBankSet}
                 className="rounded-xl bg-[#7C3AED] py-3 text-xs font-black text-white shadow-md hover:bg-[#6D28D9]"
               >
-                Soalan Seterusnya ↻
+                Set Seterusnya ↻
               </button>
               <button
                 type="button"

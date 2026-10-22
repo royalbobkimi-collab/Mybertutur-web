@@ -12,6 +12,8 @@ import { Footer, type LegalKind } from './components/Footer';
 import { AuthModal } from './components/AuthModal';
 import { LegalDialog } from './components/LegalDialog';
 import { CloseIcon } from './components/Icons';
+import { AdBanner } from './components/AdBanner';
+
 import { RouterProvider, useRouter as useAppRouter } from './app/router';
 import { LanguageProvider } from './app/i18n';
 import { PreferencesProvider } from './app/preferences';
@@ -77,10 +79,22 @@ function LandingPage({
       <main>
         <Hero onOpenAuth={onOpenAuth} />
         <AppOnWeb />
+
+        {/* Global responsive banner unit for home/landing visitors */}
+        <section className="mx-auto max-w-4xl px-4 py-4 sm:px-6">
+          <AdBanner placement="landing-inline" />
+        </section>
+
         <Features />
         <HowItWorks />
         <FAQ />
         <CTA onOpenAuth={onOpenAuth} />
+
+        {/* Supplementary banner placement above reviews/footer */}
+        <section className="mx-auto max-w-4xl px-4 py-4 sm:px-6">
+          <AdBanner placement="landing-footer" />
+        </section>
+
         {/* Reviews deliberately sit last, after all other content. */}
         <Reviews />
       </main>

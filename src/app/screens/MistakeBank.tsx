@@ -117,10 +117,10 @@ export function MistakeBank() {
               </span>
             </div>
             <p className="mt-2 text-xs">
-              <span className="font-bold text-red-500">✕ Ujaran anda:</span> &ldquo;{m.user_answer}&rdquo;
+              <span className="font-bold text-red-500">✕ Ujaran anda:</span> “{m.user_answer}”
             </p>
             <p className="mt-1 text-xs">
-              <span className="font-bold text-emerald-500">✓ Cadangan betul:</span> &ldquo;{m.correct_answer}&rdquo;
+              <span className="font-bold text-emerald-500">✓ Cadangan betul:</span> “{m.correct_answer}”
             </p>
             {m.ai_explanation && (
               <p className="mt-2 rounded-[14px] bg-slate-50 p-2.5 text-xs leading-relaxed text-slate-600 dark:bg-white/5 dark:text-slate-300">
