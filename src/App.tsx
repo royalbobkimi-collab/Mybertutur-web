@@ -13,6 +13,7 @@ import { AuthModal } from './components/AuthModal';
 import { LegalDialog } from './components/LegalDialog';
 import { CloseIcon } from './components/Icons';
 import { AdBanner } from './components/AdBanner';
+import { Maintenance } from './components/Maintenance';
 
 import { RouterProvider, useRouter as useAppRouter } from './app/router';
 import { LanguageProvider } from './app/i18n';
@@ -20,6 +21,9 @@ import { PreferencesProvider } from './app/preferences';
 import { AppRoutes } from './app/routes';
 
 type AuthMode = 'signin' | 'signup';
+
+/** When true, every route renders the maintenance announcement first. */
+const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE === 'true';
 
 /** Dismissible banner for OAuth redirect notices (cancelled Google login…). */
 function AuthNoticeBanner() {
@@ -140,6 +144,9 @@ function Root() {
 }
 
 export default function App() {
+  if (MAINTENANCE_MODE) {
+    return <Maintenance />;
+  }
   return (
     <AuthProvider>
       <RouterProvider>
